@@ -11,9 +11,13 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Mail, Lock, User, UserPlus, Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
+import { PasswordStrengthMeter } from "@/components/ui/PasswordStrengthMeter";
 
 const signupSchema = z.object({
-    username: z.string().min(3, "Username must be at least 3 characters"),
+    username: z.string()
+        .min(3, "Username must be at least 3 characters")
+        .max(20, "Username must be at most 20 characters")
+        .regex(/^[a-zA-Z0-9_]+$/, "Username can only contain letters, numbers, and underscores"),
     email: z.string().email("Invalid email address"),
     password: z.string().min(6, "Password must be at least 6 characters"),
     confirmPassword: z.string().min(6, "Password must be at least 6 characters"),
@@ -29,7 +33,6 @@ export default function SignupPage() {
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
-    const [oauthLoading, setOauthLoading] = useState<"google" | "discord" | null>(null);
 
     useEffect(() => {
         supabase.auth.getSession().then(({ data: { session } }) => {
@@ -40,38 +43,43 @@ export default function SignupPage() {
     const {
         register,
         handleSubmit,
+        watch,
         formState: { errors },
     } = useForm<SignupFormValues>({
         resolver: zodResolver(signupSchema),
     });
 
+    const watchedPassword = watch("password", "");
+
     const onSubmit = async (data: SignupFormValues) => {
         setLoading(true);
         setError(null);
+
+        // Check if username is already taken
+        const { data: existingUser } = await supabase
+            .from('profiles')
+            .select('username')
+            .eq('username', data.username)
+            .single();
+
+        if (existingUser) {
+            setError("This username is already taken. Please choose another one.");
+            setLoading(false);
+            return;
+        }
+
         const { error: signUpError } = await supabase.auth.signUp({
             email: data.email,
             password: data.password,
             options: { data: { username: data.username } },
         });
+
         if (signUpError) {
             setError(signUpError.message);
             setLoading(false);
         } else {
             setSuccess(true);
             setLoading(false);
-        }
-    };
-
-    const handleOAuth = async (provider: "google" | "discord") => {
-        setOauthLoading(provider);
-        setError(null);
-        const { error } = await supabase.auth.signInWithOAuth({
-            provider,
-            options: { redirectTo: `${window.location.origin}/` },
-        });
-        if (error) {
-            setError(error.message);
-            setOauthLoading(null);
         }
     };
 
@@ -178,6 +186,7 @@ export default function SignupPage() {
                                     />
                                 </div>
                                 {errors.password && <p className="text-xs text-red-400">{errors.password.message}</p>}
+                                <PasswordStrengthMeter password={watchedPassword} className="mt-2" />
                             </div>
 
                             {/* Confirm Password */}
@@ -205,7 +214,7 @@ export default function SignupPage() {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="w-full h-11 flex items-center justify-center gap-2 rounded-xl bg-primary font-bold text-white shadow-[0_0_20px_rgba(168,85,247,0.3)] transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 cursor-pointer mt-2"
+                                className="mt-10 w-full h-11 flex items-center justify-center gap-2 rounded-xl bg-primary font-bold text-white shadow-[0_0_20px_rgba(168,85,247,0.3)] transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 cursor-pointer mt-2"
                             >
                                 {loading ? (
                                     <Loader2 size={18} className="animate-spin" />
