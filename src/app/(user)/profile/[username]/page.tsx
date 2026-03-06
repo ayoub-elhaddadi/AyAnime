@@ -93,13 +93,16 @@ export default function ProfilePage() {
                 {/* Profile Card */}
                 <div className="relative mb-10 overflow-hidden rounded-3xl bg-zinc-900/50 border border-white/5 p-8 md:p-12">
                     <div className="absolute top-0 right-0 p-4">
-                        <Link href="/settings">
-                            <Button size="icon" variant="ghost" className="group h-8 w-8 rounded-full border-white/10 bg-white/5 flex items-center justify-center overflow-hidden transition-all duration-300 hover:w-24 hover:cursor-pointer">
-                                <Settings size={14} className="shrink-0" />
-                                <span className="max-w-0 opacity-0 overflow-hidden whitespace-nowrap text-[10px] font-bold transition-all duration-300 group-hover:max-w-[60px] group-hover:opacity-100 group-hover:ml-2">
-                                    Settings
-                                </span>
-                            </Button>
+                        <Link
+                            href="/settings"
+                            className="group flex items-center gap-0 overflow-hidden rounded-full bg-white/5 p-1 ring-1 ring-white/10 hover:ring-primary/50 transition-all duration-300"
+                        >
+                            <div className="h-8 w-8 rounded-full bg-zinc-800 flex items-center justify-center transition-colors group-hover:bg-zinc-700">
+                                <Settings size={16} className="text-primary" />
+                            </div>
+                            <span className="max-w-0 opacity-0 overflow-hidden whitespace-nowrap text-xs font-bold text-zinc-300 transition-all duration-300 group-hover:max-w-[70px] group-hover:opacity-100 group-hover:px-2">
+                                Settings
+                            </span>
                         </Link>
                     </div>
 
@@ -107,7 +110,7 @@ export default function ProfilePage() {
                         <div className="relative h-32 w-32 md:h-40 md:w-40 rounded-full bg-primary/20 p-1 ring-4 ring-primary/30">
                             <div className="h-full w-full rounded-full overflow-hidden bg-zinc-800 flex items-center justify-center">
                                 {profile?.avatar_url ? (
-                                    <Image src={profile.avatar_url} alt={profile.username || ""} fill className="object-cover" />
+                                    <Image src={profile.avatar_url} alt={profile.username || ""} fill className="object-cover rounded-full" />
                                 ) : (
                                     <UserIcon size={64} className="text-zinc-600" />
                                 )}
@@ -120,7 +123,7 @@ export default function ProfilePage() {
                                     {profile?.username || "Anime Enthusiast"}
                                 </h1>
                             </div>
-                            <p className="text-zinc-400 max-w-xl mb-6 truncate italic">
+                            <p className="text-zinc-400 w-full mb-6 truncate italic">
                                 {profile?.bio || "No bio yet. Writing my own anime origin story..."}
                             </p>
 
