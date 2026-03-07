@@ -6,9 +6,10 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { Navbar } from "@/components/shared/Navbar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Shield, AlertTriangle, CheckCircle, XCircle, MessageSquare, User, Flag } from "lucide-react";
+import { Shield, AlertTriangle, CheckCircle, XCircle, MessageSquare, Flag } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { cn } from "@/lib/utils";
 
 export default function AdminDashboard() {
     const { profile } = useAuthStore();
@@ -22,7 +23,7 @@ export default function AdminDashboard() {
         }
     }, [profile, router]);
 
-    const { data: reports, isLoading: reportsLoading } = useQuery({
+    const { data: reports } = useQuery({
         queryKey: ["admin_reports"],
         queryFn: async () => {
             const { data, error } = await supabase
@@ -130,7 +131,7 @@ export default function AdminDashboard() {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-white/5 bg-zinc-900/20">
-                                {reports?.map((report: any) => (
+                                {reports?.map(report => (
                                     <tr key={report.id} className="text-sm group hover:bg-white/5 transition-colors">
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-3">

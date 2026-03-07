@@ -5,8 +5,9 @@ import { supabase } from "@/lib/supabase";
 import { useAuthStore } from "@/store/useAuthStore";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { Anime } from "../jikan";
 
-export function useCollections(animeId: number, animeData?: any) {
+export function useCollections(animeId: number, animeData?: Anime) {
     const { user } = useAuthStore();
     const queryClient = useQueryClient();
     const router = useRouter();
@@ -19,7 +20,7 @@ export function useCollections(animeId: number, animeData?: any) {
             .upsert({
                 id: animeId,
                 title: animeData.title || "Unknown Title",
-                image_url: animeData.image || animeData.images?.webp?.large_image_url,
+                image_url: animeData.images?.webp?.image_url || animeData.images?.webp?.large_image_url,
                 score: animeData.score,
                 episodes: animeData.episodes,
                 status: animeData.status,
@@ -44,7 +45,7 @@ export function useCollections(animeId: number, animeData?: any) {
                 .from("watchlist")
                 .select("*")
                 .eq("anime_id", animeId)
-                .eq("user_id", user?.id)
+                .eq("user_id", user?.id as string)
                 .single();
             if (error && error.code !== "PGRST116") throw error;
             return data;
@@ -60,7 +61,7 @@ export function useCollections(animeId: number, animeData?: any) {
                 .from("favorites")
                 .select("*")
                 .eq("anime_id", animeId)
-                .eq("user_id", user?.id)
+                .eq("user_id", user?.id as string)
                 .single();
             if (error && error.code !== "PGRST116") throw error;
             return !!data;
@@ -103,7 +104,7 @@ export function useCollections(animeId: number, animeData?: any) {
             queryClient.invalidateQueries({ queryKey: ["user_stats", user?.id] });
             toast.success(watchlistStatus ? "Removed from Watchlist" : "Added to Watchlist");
         },
-        onError: (err: any) => {
+        onError: (err: Error) => {
             if (err.message !== "Authentication required") {
                 toast.error(err.message);
             }
@@ -127,7 +128,7 @@ export function useCollections(animeId: number, animeData?: any) {
             queryClient.invalidateQueries({ queryKey: ["user_stats", user?.id] });
             toast.success(`Moved to ${newStatus}`);
         },
-        onError: (err: any) => toast.error(err.message),
+        onError: (err: Error) => toast.error(err.message),
     });
 
     const updateWatchlistProgress = useMutation({
@@ -151,7 +152,7 @@ export function useCollections(animeId: number, animeData?: any) {
             queryClient.invalidateQueries({ queryKey: ["user_recent_watchlist", user?.id] });
             toast.success("Progress updated");
         },
-        onError: (err: any) => toast.error(err.message),
+        onError: (err: Error) => toast.error(err.message),
     });
 
     const toggleFavorite = useMutation({
@@ -188,7 +189,7 @@ export function useCollections(animeId: number, animeData?: any) {
             queryClient.invalidateQueries({ queryKey: ["user_stats", user?.id] });
             toast.success(isFavorited ? "Removed from Favorites" : "Added to Favorites");
         },
-        onError: (err: any) => {
+        onError: (err: Error) => {
             if (err.message !== "Authentication required") {
                 toast.error(err.message);
             }

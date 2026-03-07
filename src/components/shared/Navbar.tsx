@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Menu, X, User, LogOut, Shield, Heart, Bookmark, LayoutGrid, LogIn, UserPlus, Settings } from "lucide-react";
+import { Search, Menu, X, User, LogOut, Shield, Heart, Bookmark, LayoutGrid, LogIn, UserPlus } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useAuthStore } from "@/store/useAuthStore";

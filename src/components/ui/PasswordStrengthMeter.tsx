@@ -84,11 +84,11 @@ export function PasswordStrengthMeter({ password, className }: PasswordStrengthM
                 })}
             </div>
 
-            {/* Error Message if strength is less than Good (3) */}
-            {strength < 3 && (
+            {/* Error Message if strength is less than Strong (4) */}
+            {strength < 4 && (
                 <div className="pt-2">
                     <p className="text-[10px] text-red-400 font-bold mt-1 flex items-center gap-1">
-                        <AlertCircle size={12} />Password is too weak. It must be at least 'Good' strength.
+                        <AlertCircle size={12} />Password is too weak. It must be at least &apos;Strong&apos; strength.
                     </p>
                 </div>
             )}

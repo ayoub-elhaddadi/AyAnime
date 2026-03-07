@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Trash2, ExternalLink, Play } from "lucide-react";
+import { Trash2, ExternalLink } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
@@ -9,16 +9,18 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useCollections } from "@/lib/hooks/useCollections";
 import { cn } from "@/lib/utils";
+import { WatchlistItemWithAnime } from "./WatchlistBoard";
+import { Anime } from "@/lib/jikan";
 
 interface WatchlistCardProps {
-    item: any;
+    item: WatchlistItemWithAnime;
 }
 
 export const WatchlistCard = ({ item }: WatchlistCardProps) => {
     const anime = item.animes;
-    const { updateWatchlistStatus, updateWatchlistProgress, toggleWatchlist } = useCollections(item.anime_id, anime);
+    const { updateWatchlistStatus, updateWatchlistProgress, toggleWatchlist } = useCollections(item.anime_id, anime as unknown as Anime);
 
-    const statusColors: any = {
+    const statusColors: Record<string, string> = {
         planned: "bg-zinc-800 text-zinc-400",
         watching: "bg-primary/20 text-primary border-primary/20",
         completed: "bg-green-500/20 text-green-500 border-green-500/20",
@@ -34,9 +36,10 @@ export const WatchlistCard = ({ item }: WatchlistCardProps) => {
             whileHover={{ y: -2 }}
             className="group cursor-grab active:cursor-grabbing"
             draggable
-            onDragStart={(e: any) => {
+            // @ts-expect-error - Framer motion's onDragStart clashes with HTML5 onDragStart
+            onDragStart={(e: React.DragEvent<HTMLDivElement>) => {
                 e.dataTransfer.setData("animeId", item.anime_id.toString());
-                e.dataTransfer.setData("currentStatus", item.status);
+                e.dataTransfer.setData("currentStatus", item.status || "");
                 e.dataTransfer.effectAllowed = "move";
             }}
         >
@@ -45,7 +48,7 @@ export const WatchlistCard = ({ item }: WatchlistCardProps) => {
                     {/* Image Thumb */}
                     <div className="relative h-24 w-16 flex-shrink-0 overflow-hidden rounded-lg shadow-md">
                         <Image
-                            src={anime.image_url}
+                            src={anime.image_url || "/placeholder.jpg"}
                             alt={anime.title}
                             fill
                             className="object-cover"
@@ -62,7 +65,7 @@ export const WatchlistCard = ({ item }: WatchlistCardProps) => {
                             </div>
 
                             <div className="mt-1 flex items-center gap-2">
-                                <Badge variant="outline" className={cn("text-[10px] px-1.5 py-0 uppercase font-black tracking-wider", statusColors[item.status])}>
+                                <Badge variant="outline" className={cn("text-[10px] px-1.5 py-0 uppercase font-black tracking-wider", statusColors[item.status || "planned"])}>
                                     {item.status}
                                 </Badge>
                                 <span className="text-[11px] text-zinc-500 font-medium">

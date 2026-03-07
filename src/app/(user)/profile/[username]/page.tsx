@@ -5,16 +5,14 @@ import { supabase } from "@/lib/supabase";
 import { useAuthStore } from "@/store/useAuthStore";
 import { Navbar } from "@/components/shared/Navbar";
 import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
-import { Settings, LogOut, User as UserIcon, Calendar, Bookmark, Heart, MessageSquare } from "lucide-react";
+import { Settings, User as UserIcon, Bookmark, Heart } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { AnimeCard } from "@/components/anime/AnimeCard";
 
 export default function ProfilePage() {
-    const { user, profile, signOut } = useAuthStore();
+    const { user, profile } = useAuthStore();
 
     // Fetch Stats
     const { data: stats } = useQuery({
@@ -23,17 +21,17 @@ export default function ProfilePage() {
             const { count: watchlistCount } = await supabase
                 .from("watchlist")
                 .select("*", { count: "exact" })
-                .eq("user_id", user?.id);
+                .eq("user_id", user?.id as string);
 
             const { count: favoritesCount } = await supabase
                 .from("favorites")
                 .select("*", { count: "exact" })
-                .eq("user_id", user?.id);
+                .eq("user_id", user?.id as string);
 
             const { count: commentsCount } = await supabase
                 .from("comments")
                 .select("*", { count: "exact" })
-                .eq("user_id", user?.id);
+                .eq("user_id", user?.id as string);
 
             return {
                 watchlistCount,
@@ -51,7 +49,7 @@ export default function ProfilePage() {
             const { data, error } = await supabase
                 .from("watchlist")
                 .select("*, animes(*)")
-                .eq("user_id", user?.id)
+                .eq("user_id", user?.id as string)
                 .order("updated_at", { ascending: false })
                 .limit(8);
             if (error) throw error;
@@ -67,7 +65,7 @@ export default function ProfilePage() {
             const { data, error } = await supabase
                 .from("favorites")
                 .select("*, animes(*)")
-                .eq("user_id", user?.id)
+                .eq("user_id", user?.id as string)
                 .order("created_at", { ascending: false })
                 .limit(8);
             if (error) throw error;
@@ -162,15 +160,15 @@ export default function ProfilePage() {
                                     <div key={i} className="aspect-[3/4] animate-pulse rounded-xl bg-white/5" />
                                 ))
                             ) : recentWatchlist?.length ? (
-                                recentWatchlist.map((item: any) => (
+                                recentWatchlist.map(item => (
                                     <AnimeCard
                                         key={item.anime_id}
                                         id={item.anime_id}
                                         title={item.animes.title}
-                                        image={item.animes.image_url}
-                                        rating={item.animes.score}
-                                        status={item.animes.status}
-                                        year={item.animes.year}
+                                        image={item.animes.image_url || ""}
+                                        rating={item.animes.score || 0}
+                                        status={item.animes.status || ""}
+                                        year={item.animes.year || 0}
                                     />
                                 ))
                             ) : (
@@ -196,15 +194,15 @@ export default function ProfilePage() {
                                     <div key={i} className="aspect-[3/4] animate-pulse rounded-xl bg-white/5" />
                                 ))
                             ) : recentFavorites?.length ? (
-                                recentFavorites.map((item: any) => (
+                                recentFavorites.map(item => (
                                     <AnimeCard
                                         key={item.anime_id}
                                         id={item.anime_id}
                                         title={item.animes.title}
-                                        image={item.animes.image_url}
-                                        rating={item.animes.score}
-                                        status={item.animes.status}
-                                        year={item.animes.year}
+                                        image={item.animes.image_url || ""}
+                                        rating={item.animes.score || 0}
+                                        status={item.animes.status || ""}
+                                        year={item.animes.year || 0}
                                     />
                                 ))
                             ) : (

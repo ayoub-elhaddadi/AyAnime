@@ -2,16 +2,18 @@
 
 import { useMemo } from "react";
 import { WatchlistColumn } from "./WatchlistColumn";
-import { motion } from "framer-motion";
+import { Tables } from "@/types/supabase";
+
+export type WatchlistItemWithAnime = Tables<"watchlist"> & { animes: Tables<"animes"> };
 
 interface WatchlistBoardProps {
-    watchlist: any[];
+    watchlist: WatchlistItemWithAnime[];
 }
 
 export const WatchlistBoard = ({ watchlist }: WatchlistBoardProps) => {
     // Group items by status
     const grouped = useMemo(() => {
-        const initialGroups: { [key: string]: any[] } = {
+        const initialGroups: { [key: string]: WatchlistItemWithAnime[] } = {
             planned: [],
             watching: [],
             completed: [],
@@ -19,7 +21,7 @@ export const WatchlistBoard = ({ watchlist }: WatchlistBoardProps) => {
         };
 
         return watchlist.reduce((acc, item) => {
-            if (acc[item.status]) {
+            if (item.status && acc[item.status]) {
                 acc[item.status].push(item);
             }
             return acc;

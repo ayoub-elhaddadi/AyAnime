@@ -35,7 +35,7 @@ export function AnimeResultsGrid({
                 </div>
                 <h3 className="text-xl font-bold text-white mb-2">No results found</h3>
                 <p className="text-zinc-500 max-w-xs mx-auto">
-                    Try adjusting your filters or search terms to find what you're looking for.
+                    Try adjusting your filters or search terms to find what you&apos;re looking for.
                 </p>
             </div>
         );

@@ -3,10 +3,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { useAuthStore } from "@/store/useAuthStore";
-import { AnimeCard } from "@/components/anime/AnimeCard";
 import { Navbar } from "@/components/shared/Navbar";
 import { Button } from "@/components/ui/button";
-import { Bookmark, LayoutGrid, List } from "lucide-react";
+import { Bookmark } from "lucide-react";
 import Link from "next/link";
 
 import { WatchlistBoard } from "@/components/watchlist/WatchlistBoard";
@@ -20,7 +19,7 @@ export default function WatchlistPage() {
             const { data, error } = await supabase
                 .from("watchlist")
                 .select("*, animes(*)")
-                .eq("user_id", user?.id);
+                .eq("user_id", user?.id as string);
             if (error) throw error;
             return data;
         },

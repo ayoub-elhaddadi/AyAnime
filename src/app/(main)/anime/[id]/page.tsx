@@ -6,8 +6,8 @@ import { Navbar } from "@/components/shared/Navbar";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { motion, AnimatePresence } from "framer-motion";
-import { Star, Clock, Calendar, Hash, Heart, BookmarkPlus, Share2, Send, MessageSquare, StickyNote, User, BookmarkCheck, Check } from "lucide-react";
+import { motion } from "framer-motion";
+import { Star, Heart, BookmarkPlus, Share2, Send, MessageSquare, StickyNote, User, BookmarkCheck } from "lucide-react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -39,14 +39,14 @@ export default function AnimeDetailsPage() {
     const { isWatchlisted, isFavorited, toggleWatchlist, toggleFavorite, upsertAnime } = useCollections(animeId, anime);
 
     // Fetch Private Notes
-    const { data: note, isLoading: noteLoading } = useQuery({
+    const { data: note } = useQuery({
         queryKey: ["note", animeId, user?.id],
         queryFn: async () => {
             const { data, error } = await supabase
                 .from("notes")
                 .select("*")
                 .eq("anime_id", animeId)
-                .eq("user_id", user?.id)
+                .eq("user_id", user?.id as string)
                 .single();
             if (error && error.code !== "PGRST116") throw error;
             return data;
@@ -55,7 +55,7 @@ export default function AnimeDetailsPage() {
     });
 
     // Fetch Comments
-    const { data: comments, isLoading: commentsLoading } = useQuery({
+    const { data: comments } = useQuery({
         queryKey: ["comments", animeId],
         queryFn: async () => {
             const { data, error } = await supabase
@@ -70,7 +70,10 @@ export default function AnimeDetailsPage() {
     });
 
     useEffect(() => {
-        if (note) setNoteContent(note.content);
+        if (note) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            setNoteContent(note.content);
+        }
     }, [note]);
 
     // Mutations
@@ -222,7 +225,7 @@ export default function AnimeDetailsPage() {
                             <p className="text-xl text-zinc-400 italic mb-6">{anime.title_japanese}</p>
 
                             <div className="flex flex-wrap gap-2 mb-8">
-                                {anime.genres.map((genre: any) => (
+                                {anime.genres.map(genre => (
                                     <span key={genre.mal_id} className="rounded-full bg-zinc-800 px-4 py-1.5 text-xs font-semibold text-zinc-300">
                                         {genre.name}
                                     </span>
@@ -252,7 +255,7 @@ export default function AnimeDetailsPage() {
                                                 <h4 className="text-lg font-bold text-white uppercase tracking-wider text-xs">Information</h4>
                                                 <div className="space-y-2">
                                                     <p><span className="text-zinc-500">Source:</span> <span className="text-zinc-300">{anime.source}</span></p>
-                                                    <p><span className="text-zinc-500">Studio:</span> <span className="text-zinc-300">{anime.studios?.map((s: any) => s.name).join(", ")}</span></p>
+                                                    <p><span className="text-zinc-500">Studio:</span> <span className="text-zinc-300">{anime.studios?.map(s => s.name).join(", ")}</span></p>
                                                     <p><span className="text-zinc-500">Rating:</span> <span className="text-zinc-300">{anime.rating}</span></p>
                                                     <p><span className="text-zinc-500">Duration:</span> <span className="text-zinc-300">{anime.duration}</span></p>
                                                 </div>
@@ -297,11 +300,11 @@ export default function AnimeDetailsPage() {
                                         )}
 
                                         <div className="space-y-6">
-                                            {comments?.map((comment: any) => (
+                                            {comments?.map(comment => (
                                                 <div key={comment.id} className="flex gap-4 animate-in fade-in slide-in-from-top-4">
                                                     <div className="h-10 w-10 shrink-0 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20 overflow-hidden">
                                                         {comment.profiles.avatar_url ? (
-                                                            <Image src={comment.profiles.avatar_url} alt={comment.profiles.username} fill className="object-cover" />
+                                                            <Image src={comment.profiles.avatar_url} alt={comment.profiles.username || ""} fill className="object-cover" />
                                                         ) : (
                                                             <span className="text-primary font-bold text-xs">{(comment.profiles.username || "U")[0].toUpperCase()}</span>
                                                         )}

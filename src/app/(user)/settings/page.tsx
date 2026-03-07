@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Camera, User, Lock, CheckCircle2, AlertCircle, Loader2, Save, ChevronLeft, LogOut } from "lucide-react";
+import { Camera, User, Lock, CheckCircle2, AlertCircle, ChevronLeft, LogOut, Loader2, Save } from "lucide-react";
 import { Navbar } from "@/components/shared/Navbar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useAuthStore } from "@/store/useAuthStore";
 import { supabase } from "@/lib/supabase";
 import { toast } from "react-hot-toast";
+import { Tables } from "@/types/supabase";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -80,7 +81,7 @@ export default function SettingsPage() {
             const fileName = `${Date.now()}.${fileExt}`;
             const filePath = `${userId}/${fileName}`;
 
-            const { error: uploadError, data } = await supabase.storage
+            const { error: uploadError } = await supabase.storage
                 .from('avatars')
                 .upload(filePath, avatarFile, { upsert: true });
 
@@ -91,8 +92,8 @@ export default function SettingsPage() {
                 .getPublicUrl(filePath);
 
             return publicUrl;
-        } catch (error: any) {
-            toast.error("Error uploading avatar: " + error.message);
+        } catch (error) {
+            toast.error("Error uploading avatar: " + (error as Error).message);
             return null;
         } finally {
             setIsUploadingAvatar(false);
@@ -153,12 +154,12 @@ export default function SettingsPage() {
                 username,
                 bio,
                 avatar_url: avatarUrl
-            } as any);
+            } as Tables<'profiles'>);
 
             toast.success("Profile updated successfully!");
             setAvatarFile(null);
-        } catch (error: any) {
-            toast.error(error.message);
+        } catch (error) {
+            toast.error((error as Error).message);
         } finally {
             setIsUpdatingProfile(false);
         }
@@ -173,8 +174,8 @@ export default function SettingsPage() {
             return;
         }
 
-        if (passwordStrength < 3) {
-            toast.error("Password is too weak. Please aim for at least 'Good' strength.");
+        if (passwordStrength < 4) {
+            toast.error("Password is too weak. Please aim for at least 'Strong' strength.");
             return;
         }
 
@@ -189,8 +190,8 @@ export default function SettingsPage() {
             toast.success("Password updated successfully!");
             setNewPassword("");
             setConfirmPassword("");
-        } catch (error: any) {
-            toast.error(error.message);
+        } catch (error) {
+            toast.error((error as Error).message);
         } finally {
             setIsUpdatingPassword(false);
         }
@@ -266,7 +267,7 @@ export default function SettingsPage() {
 
                             <div className="pt-4 border-t border-white/5">
                                 <p className="text-sm text-zinc-400 italic line-clamp-3">
-                                    "{bio || "Ready to change the world, one episode at a time."}"
+                                    &quot;{bio || "Ready to change the world, one episode at a time."}&quot;
                                 </p>
                             </div>
                         </motion.div>
@@ -411,10 +412,10 @@ export default function SettingsPage() {
 
                                 <Button
                                     variant="outline"
-                                    disabled={isUpdatingPassword || !newPassword || passwordStrength < 3 || newPassword !== confirmPassword}
+                                    disabled={isUpdatingPassword || !newPassword || passwordStrength < 4 || newPassword !== confirmPassword}
                                     className={cn(
                                         "w-full md:w-auto px-10 h-12 gap-2 rounded-xl font-bold italic transition-all shadow-lg group",
-                                        (passwordStrength < 3 || newPassword !== confirmPassword || !newPassword)
+                                        (passwordStrength < 4 || newPassword !== confirmPassword || !newPassword)
                                             ? "opacity-40 grayscale pointer-events-none"
                                             : "border-red-500/20 text-red-500 hover:bg-red-500/10 hover:border-red-500 hover:cursor-pointer hover:shadow-red-500/5"
                                     )}

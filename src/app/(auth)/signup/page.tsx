@@ -1,6 +1,6 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
@@ -13,14 +13,19 @@ import { motion } from "framer-motion";
 import { Mail, Lock, User, UserPlus, Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
 import { PasswordStrengthMeter } from "@/components/ui/PasswordStrengthMeter";
 
+const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
+
 const signupSchema = z.object({
     username: z.string()
         .min(3, "Username must be at least 3 characters")
         .max(20, "Username must be at most 20 characters")
         .regex(/^[a-zA-Z0-9_]+$/, "Username can only contain letters, numbers, and underscores"),
-    email: z.string().email("Invalid email address"),
-    password: z.string().min(6, "Password must be at least 6 characters"),
-    confirmPassword: z.string().min(6, "Password must be at least 6 characters"),
+    email: z.email("Invalid email address"),
+    password: z.string().min(8, "Password must be at least 8 characters").regex(
+        passwordRegex,
+        "Password must be at least 8 characters"
+    ),
+    confirmPassword: z.string(),
 }).refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
     path: ["confirmPassword"],
@@ -43,13 +48,18 @@ export default function SignupPage() {
     const {
         register,
         handleSubmit,
-        watch,
-        formState: { errors },
+        control,
+        trigger,
+        formState: { errors, isValid },
     } = useForm<SignupFormValues>({
         resolver: zodResolver(signupSchema),
     });
 
-    const watchedPassword = watch("password", "");
+    const watchedPassword = useWatch({
+        control,
+        name: "password",
+        defaultValue: ""
+    });
 
     const onSubmit = async (data: SignupFormValues) => {
         setLoading(true);
@@ -179,7 +189,7 @@ export default function SignupPage() {
                                 <div className="relative">
                                     <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none" />
                                     <input
-                                        {...register("password")}
+                                        {...register("password", { onChange: () => trigger("confirmPassword") })}
                                         type="password"
                                         placeholder="••••••••"
                                         className={`w-full rounded-xl border bg-black/40 py-3 pl-10 pr-4 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:ring-2 transition-all ${errors.password ? "border-red-500/60 focus:ring-red-500/20" : "border-white/10 focus:ring-primary/30 focus:border-primary/50"}`}
@@ -201,7 +211,9 @@ export default function SignupPage() {
                                         className={`w-full rounded-xl border bg-black/40 py-3 pl-10 pr-4 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:ring-2 transition-all ${errors.confirmPassword ? "border-red-500/60 focus:ring-red-500/20" : "border-white/10 focus:ring-primary/30 focus:border-primary/50"}`}
                                     />
                                 </div>
-                                {errors.confirmPassword && <p className="text-xs text-red-400">{errors.confirmPassword.message}</p>}
+                                {errors.confirmPassword && <p className="text-[10px] text-red-400 font-bold mt-1 flex items-center gap-1">
+                                    <AlertCircle size={12} />{errors.confirmPassword.message}
+                                </p>}
                             </div>
 
                             {error && (
@@ -213,8 +225,8 @@ export default function SignupPage() {
 
                             <button
                                 type="submit"
-                                disabled={loading}
-                                className="mt-10 w-full h-11 flex items-center justify-center gap-2 rounded-xl bg-primary font-bold text-white shadow-[0_0_20px_rgba(168,85,247,0.3)] transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 cursor-pointer mt-2"
+                                disabled={loading || !isValid}
+                                className="mt-10 w-full h-11 flex items-center justify-center gap-2 rounded-xl bg-primary font-bold text-white shadow-[0_0_20px_rgba(168,85,247,0.3)] transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 cursor-pointer mt-2 disabled:cursor-not-allowed"
                             >
                                 {loading ? (
                                     <Loader2 size={18} className="animate-spin" />
