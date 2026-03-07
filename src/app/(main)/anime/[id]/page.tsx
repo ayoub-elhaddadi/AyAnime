@@ -43,7 +43,6 @@ export default function AnimeDetailsPage() {
     const { user, profile } = useAuthStore();
     const queryClient = useQueryClient();
 
-    const [noteContent, setNoteContent] = useState("");
     const [commentContent, setCommentContent] = useState("");
     const [replyingTo, setReplyingTo] = useState<{ id: string, username: string } | null>(null);
     const [activeTab, setActiveTab] = useState("overview");
@@ -76,12 +75,7 @@ export default function AnimeDetailsPage() {
         enabled: !!animeId && !!user,
     });
 
-    // Handle initial note content
-    useEffect(() => {
-        if (note) {
-            setNoteContent(note.content || "");
-        }
-    }, [note]);
+    const [noteContent, setNoteContent] = useState(note?.content || "");
 
     // Fetch Comments
     const { data: comments } = useQuery({
