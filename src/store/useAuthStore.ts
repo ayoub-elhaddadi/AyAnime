@@ -26,7 +26,27 @@ export const useAuthStore = create<AuthState>((set) => ({
             .eq('id', userId)
             .single();
 
-        if (!error) {
+        if (!error && data) {
+            // Generate username if null (OAuth edge case)
+            if (!data.username) {
+                const { data: { user } } = await supabase.auth.getUser();
+                if (user) {
+                    const fallbackName = user.user_metadata?.full_name?.replace(/\s+/g, '_').toLowerCase()
+                        || user.email?.split('@')[0]
+                        || `user_${Math.random().toString(36).substring(2, 8)}`;
+
+                    const newUsername = `${fallbackName}_${Math.floor(Math.random() * 1000)}`;
+
+                    const { error: updateError } = await supabase
+                        .from('profiles')
+                        .update({ username: newUsername })
+                        .eq('id', userId);
+
+                    if (!updateError) {
+                        data.username = newUsername;
+                    }
+                }
+            }
             set({ profile: data });
         }
     },
