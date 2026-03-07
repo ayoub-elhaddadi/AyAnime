@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { X, Youtube, Instagram, Github } from "lucide-react";
+import { X, Youtube, Instagram, Github, Heart } from "lucide-react";
 
 export const Footer = () => {
     const pathname = usePathname();
@@ -112,8 +112,8 @@ export const Footer = () => {
 
                 {/* Bottom Bar */}
                 <div className="mt-16 flex flex-col items-center justify-between gap-6 border-t border-white/5 pt-8 md:flex-row">
-                    <p className="text-[10px] font-medium uppercase tracking-widest text-zinc-500">
-                        © {currentYear} AyAnime. Built for fans by fans.
+                    <p className="text-[10px] font-medium uppercase tracking-widest text-zinc-500 flex justify-center items-center gap-2">
+                        © {currentYear} AyAnime. Built with <Heart className="text-red-500" size={16} /> by <span className="text-primary italic font-bold">Yassine Fadil</span>
                     </p>
                     <div className="flex items-center gap-6">
                         <Link href="/privacy" className="text-xs text-zinc-500 hover:text-primary transition-colors">Privacy</Link>
