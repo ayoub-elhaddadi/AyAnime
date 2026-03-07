@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { motion } from "framer-motion";
-import { Star, Heart, BookmarkPlus, Share2, Send, MessageSquare, StickyNote, User, BookmarkCheck, ThumbsUp, Reply, Trash2, X, Edit2 } from "lucide-react";
+import { Star, Heart, BookmarkPlus, Share2, Send, MessageSquare, StickyNote, User, BookmarkCheck, ThumbsUp, Reply, Trash2, X, Edit2, PlayCircle } from "lucide-react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -28,6 +28,7 @@ export default function AnimeDetailsPage() {
     const [commentContent, setCommentContent] = useState("");
     const [replyingTo, setReplyingTo] = useState<{ id: string, username: string } | null>(null);
     const [activeTab, setActiveTab] = useState("overview");
+    const [isTrailerOpen, setIsTrailerOpen] = useState(false);
 
     // Fetch Anime Details
     const { data: animeResp, isLoading: animeLoading } = useQuery({
@@ -256,7 +257,50 @@ export default function AnimeDetailsPage() {
                             </div>
                         </div>
 
-                        {/* Stats Sidebar */}
+                        {/* Watch Trailer Button */}
+                        {anime.trailer?.embed_url && (
+                            <Button
+                                variant="outline"
+                                className="w-full h-10 gap-2 bg-white/5 border-white/10 hover:bg-white/10 hover:cursor-pointer text-white mt-3"
+                                onClick={() => setIsTrailerOpen(true)}
+                            >
+                                <PlayCircle size={18} className="text-red-500" /> Watch Trailer
+                            </Button>
+                        )}
+
+                        {/* Trailer Modal */}
+                        {isTrailerOpen && anime.trailer?.embed_url && (
+                            <div
+                                className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm animate-in fade-in"
+                                onClick={() => setIsTrailerOpen(false)}
+                            >
+                                <div
+                                    className="relative w-full max-w-4xl mx-4 animate-in zoom-in-95"
+                                    onClick={(e) => e.stopPropagation()}
+                                >
+                                    <button
+                                        className="absolute -top-10 right-0 text-white/70 hover:text-white transition-colors flex items-center gap-1 text-sm hover:cursor-pointer"
+                                        onClick={() => setIsTrailerOpen(false)}
+                                    >
+                                        <X size={18} /> Close
+                                    </button>
+                                    <div className="relative aspect-video w-full rounded-xl overflow-hidden ring-1 ring-white/10 shadow-2xl shadow-black/50">
+                                        <iframe
+                                            src={anime.trailer.embed_url.includes('?')
+                                                ? `${anime.trailer.embed_url}&autoplay=1`
+                                                : `${anime.trailer.embed_url}?autoplay=1`}
+                                            title={`${anime.title} Trailer`}
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                            allowFullScreen
+                                            className="absolute inset-0 w-full h-full"
+                                        />
+                                    </div>
+                                    <p className="text-center text-zinc-400 text-sm mt-4 tracking-wide">{anime.title} — Official Trailer</p>
+                                </div>
+                            </div>
+                        )}
+
+
                         <div className="mt-8 rounded-xl bg-zinc-900/50 border border-white/5 p-4 space-y-4">
                             <div className="flex items-center justify-between text-sm">
                                 <span className="text-zinc-400">Score</span>
@@ -315,10 +359,6 @@ export default function AnimeDetailsPage() {
                                         </p>
 
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                            <div className="space-y-4">
-                                                <h4 className="text-lg font-bold text-white uppercase tracking-wider text-xs">Background</h4>
-                                                <p className="text-zinc-500 text-sm leading-relaxed">{anime.background || "No background information available."}</p>
-                                            </div>
                                             <div className="space-y-4 text-sm">
                                                 <h4 className="text-lg font-bold text-white uppercase tracking-wider text-xs">Information</h4>
                                                 <div className="space-y-2">
@@ -327,6 +367,10 @@ export default function AnimeDetailsPage() {
                                                     <p><span className="text-zinc-500">Rating:</span> <span className="text-zinc-300">{anime.rating}</span></p>
                                                     <p><span className="text-zinc-500">Duration:</span> <span className="text-zinc-300">{anime.duration}</span></p>
                                                 </div>
+                                            </div>
+                                            <div className="space-y-4">
+                                                <h4 className="text-lg font-bold text-white uppercase tracking-wider text-xs">Background</h4>
+                                                <p className="text-zinc-500 text-sm leading-relaxed">{anime.background || "No background information available."}</p>
                                             </div>
                                         </div>
                                     </div>
