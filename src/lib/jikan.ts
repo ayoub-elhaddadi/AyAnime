@@ -29,6 +29,11 @@ export interface Anime {
     studios: Array<{ mal_id: number; name: string }>;
     source: string;
     background: string;
+    trailer: {
+        youtube_id: string | null;
+        url: string | null;
+        embed_url: string | null;
+    };
 }
 
 export interface JikanPagination {

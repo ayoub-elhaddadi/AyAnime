@@ -33,7 +33,7 @@ export const Footer = () => {
             { Icon: X, href: "#" },
             { Icon: Instagram, href: "#" },
             { Icon: Youtube, href: "#" },
-            { Icon: Github, href: "#" }
+            { Icon: Github, href: "https://github.com/ayoub-elhaddadi" }
         ]
     };
 

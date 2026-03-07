@@ -105,6 +105,7 @@ export const AnimeCarousel = ({ title, description, data, isLoading, icon }: Ani
                                 rating={anime.score}
                                 year={anime.year}
                                 status={anime.status}
+                                trailerEmbedUrl={anime.trailer?.embed_url ?? null}
                             />
                         </div>
                     ))
