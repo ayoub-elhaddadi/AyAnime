@@ -18,6 +18,7 @@ import { cn } from "@/lib/utils";
 import { useCollections } from "@/lib/hooks/useCollections";
 import Link from "next/link";
 import { ShareMenu } from "@/components/shared/ShareMenu";
+import { TrailerModal } from "@/components/shared/TrailerModal";
 
 interface Comment {
     id: string;
@@ -75,12 +76,12 @@ export default function AnimeDetailsPage() {
         enabled: !!animeId && !!user,
     });
 
-    // Handle initial note content - set during render if not already set
-    const [lastLoadedNoteId, setLastLoadedNoteId] = useState<string | null>(null);
-    if (note?.id !== lastLoadedNoteId) {
-        setLastLoadedNoteId(note?.id || null);
-        setNoteContent(note?.content || "");
-    }
+    // Handle initial note content
+    useEffect(() => {
+        if (note) {
+            setNoteContent(note.content || "");
+        }
+    }, [note]);
 
     // Fetch Comments
     const { data: comments } = useQuery({
@@ -291,35 +292,13 @@ export default function AnimeDetailsPage() {
                         )}
 
                         {/* Trailer Modal */}
-                        {isTrailerOpen && anime.trailer?.embed_url && (
-                            <div
-                                className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm animate-in fade-in"
-                                onClick={() => setIsTrailerOpen(false)}
-                            >
-                                <div
-                                    className="relative w-full max-w-4xl mx-4 animate-in zoom-in-95"
-                                    onClick={(e) => e.stopPropagation()}
-                                >
-                                    <button
-                                        className="absolute -top-10 right-0 text-white/70 hover:text-white transition-colors flex items-center gap-1 text-sm hover:cursor-pointer"
-                                        onClick={() => setIsTrailerOpen(false)}
-                                    >
-                                        <X size={18} /> Close
-                                    </button>
-                                    <div className="relative aspect-video w-full rounded-xl overflow-hidden ring-1 ring-white/10 shadow-2xl shadow-black/50">
-                                        <iframe
-                                            src={anime.trailer.embed_url.includes('?')
-                                                ? `${anime.trailer.embed_url}&autoplay=1`
-                                                : `${anime.trailer.embed_url}?autoplay=1`}
-                                            title={`${anime.title} Trailer`}
-                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                            allowFullScreen
-                                            className="absolute inset-0 w-full h-full"
-                                        />
-                                    </div>
-                                    <p className="text-center text-zinc-400 text-sm mt-4 tracking-wide">{anime.title} — Official Trailer</p>
-                                </div>
-                            </div>
+                        {anime.trailer?.embed_url && (
+                            <TrailerModal
+                                isOpen={isTrailerOpen}
+                                onClose={() => setIsTrailerOpen(false)}
+                                embedUrl={anime.trailer.embed_url}
+                                title={anime.title}
+                            />
                         )}
 
 
