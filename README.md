@@ -1,4 +1,4 @@
-# AyAnime (Aniverse) 🌌
+# AyAnime 🌌
 
 A modern, full-stack anime tracking and discovery application built with Next.js, React, Tailwind CSS, and Supabase. AyAnime allows users to explore anime, manage their watchlists with a fluid drag-and-drop interface, and interact with the community.
 
