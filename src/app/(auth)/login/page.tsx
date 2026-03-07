@@ -75,7 +75,7 @@ export default function LoginPage() {
         setError(null);
         const { error } = await supabase.auth.signInWithOAuth({
             provider,
-            options: { redirectTo: `${window.location.origin}/` },
+            options: { redirectTo: `/` },
         });
         if (error) {
             setError(error.message);
