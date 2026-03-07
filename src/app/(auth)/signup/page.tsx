@@ -53,6 +53,7 @@ export default function SignupPage() {
         formState: { errors, isValid },
     } = useForm<SignupFormValues>({
         resolver: zodResolver(signupSchema),
+        mode: "onChange",
     });
 
     const watchedPassword = useWatch({
