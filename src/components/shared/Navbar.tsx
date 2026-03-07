@@ -8,6 +8,7 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 export const Navbar = () => {
     const [isScrolled, setIsScrolled] = useState(false);
@@ -90,7 +91,7 @@ export const Navbar = () => {
                             >
                                 <div className="h-8 w-8 rounded-full bg-zinc-800 flex items-center justify-center transition-colors group-hover:bg-zinc-700">
                                     {profile?.avatar_url ? (
-                                        <img src={profile.avatar_url} alt="Profile" className="h-full w-full object-cover" />
+                                        <Image src={profile.avatar_url} alt="Profile" className="h-full w-full object-cover rounded-full" width={32} height={32} />
                                     ) : (
                                         <User size={18} className="text-primary" />
                                     )}

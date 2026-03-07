@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { MoveLeft, Compass, Home } from "lucide-react";
+import { Compass, Home } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function NotFound() {

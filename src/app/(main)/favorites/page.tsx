@@ -18,7 +18,7 @@ export default function FavoritesPage() {
             const { data, error } = await supabase
                 .from("favorites")
                 .select("*, animes(*)")
-                .eq("user_id", user?.id);
+                .eq("user_id", user?.id as string);
             if (error) throw error;
             return data;
         },
@@ -62,13 +62,13 @@ export default function FavoritesPage() {
                     </div>
                 ) : favorites && favorites.length > 0 ? (
                     <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 sm:gap-6">
-                        {favorites.map((item: any) => (
+                        {favorites.map(item => (
                             <AnimeCard
                                 key={item.anime_id}
                                 id={item.anime_id}
                                 title={item.animes.title}
                                 image={item.animes.image_url || "/placeholder.jpg"}
-                                rating={item.animes.score}
+                                rating={item.animes.score || 0}
                             />
                         ))}
                     </div>

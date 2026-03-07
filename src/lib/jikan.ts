@@ -21,10 +21,14 @@ export interface Anime {
     status: string;
     year: number;
     season: string;
-    genres: Array<{ name: string }>;
+    genres: Array<{ mal_id: number; name: string }>;
     type: string;
     duration: string;
     rating: string;
+    title_japanese: string;
+    studios: Array<{ mal_id: number; name: string }>;
+    source: string;
+    background: string;
 }
 
 export interface JikanPagination {

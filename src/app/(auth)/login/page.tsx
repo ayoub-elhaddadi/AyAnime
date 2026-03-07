@@ -3,7 +3,6 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
@@ -50,7 +49,7 @@ export default function LoginPage() {
     const {
         register,
         handleSubmit,
-        formState: { errors },
+        formState: { errors, isValid },
     } = useForm<LoginFormValues>({
         resolver: zodResolver(loginSchema),
     });
@@ -191,8 +190,8 @@ export default function LoginPage() {
 
                             <button
                                 type="submit"
-                                disabled={loading}
-                                className="w-full h-11 flex items-center justify-center gap-2 rounded-xl bg-primary font-bold text-white shadow-[0_0_20px_rgba(168,85,247,0.3)] transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 cursor-pointer"
+                                disabled={loading || !isValid}
+                                className="w-full h-11 flex items-center justify-center gap-2 rounded-xl bg-primary font-bold text-white shadow-[0_0_20px_rgba(168,85,247,0.3)] transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 cursor-pointer disabled:cursor-not-allowed"
                             >
                                 {loading ? (
                                     <Loader2 size={18} className="animate-spin" />

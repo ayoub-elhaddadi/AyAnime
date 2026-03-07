@@ -27,7 +27,7 @@ export function CatalogContent() {
     const searchParams = useSearchParams();
 
     // Sync from URL params
-    const getParam = (key: string, fallback: string) => searchParams.get(key) || fallback;
+    const getParam = useCallback((key: string, fallback: string) => searchParams.get(key) || fallback, [searchParams]);
     const page = parseInt(getParam("page", "1"));
     const search = getParam("q", "");
 
@@ -36,7 +36,7 @@ export function CatalogContent() {
         type: getParam("type", ""),
         order_by: getParam("order_by", "popularity"),
         sort: getParam("sort", "desc") as "asc" | "desc",
-    }), [searchParams]);
+    }), [getParam]);
 
     const [localSearch, setLocalSearch] = useState(search);
     const [showFilters, setShowFilters] = useState(false);
@@ -101,7 +101,6 @@ export function CatalogContent() {
     };
 
     const handleReset = () => {
-        const params = new URLSearchParams();
         router.push(`${pathname}`, { scroll: false });
         setLocalSearch("");
         toast.success("Filters reset");

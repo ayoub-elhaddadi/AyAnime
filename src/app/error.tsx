@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
-import { RefreshCcw, Home, MessageSquare, AlertCircle } from "lucide-react";
+import { AlertCircle, RefreshCcw, Home } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function Error({

@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -8,10 +8,11 @@ import { toast } from "react-hot-toast";
 import { WatchlistCard } from "./WatchlistCard";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { WatchlistItemWithAnime } from "./WatchlistBoard";
 
 interface WatchlistColumnProps {
     title: string;
-    items: any[];
+    items: WatchlistItemWithAnime[];
     status: string;
 }
 
@@ -31,19 +32,19 @@ export const WatchlistColumn = ({ title, items, status }: WatchlistColumnProps) 
                 .from("watchlist")
                 .update({ status, updated_at: new Date().toISOString() })
                 .eq("anime_id", parseInt(animeId))
-                .eq("user_id", user?.id);
+                .eq("user_id", user?.id as string);
 
             if (error) throw error;
 
             toast.success(`Moved to ${status}`);
             queryClient.invalidateQueries({ queryKey: ["watchlist", user?.id] });
             queryClient.invalidateQueries({ queryKey: ["user_stats", user?.id] });
-        } catch (error: any) {
-            toast.error(error.message);
+        } catch (error) {
+            toast.error((error as Error).message);
         }
     };
 
-    const statusColors: any = {
+    const statusColors: Record<string, string> = {
         planned: "bg-zinc-800 text-zinc-400",
         watching: "bg-primary text-white",
         completed: "bg-green-500 text-white",

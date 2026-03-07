@@ -5,6 +5,16 @@ import Link from "next/link";
 import { X, MessageSquare, Rss, Zap } from "lucide-react";
 import { motion } from "framer-motion";
 
+const TimeUnit = ({ value, label }: { value: number; label: string }) => (
+    <div className="flex flex-col items-center">
+        <div className="relative flex h-20 w-20 items-center justify-center rounded-2xl bg-white/5 border border-white/10 text-3xl font-black text-white sm:h-24 sm:w-24 sm:text-4xl">
+            {value.toString().padStart(2, '0')}
+            <div className="absolute inset-x-0 bottom-0 h-1 bg-primary/30" />
+        </div>
+        <span className="mt-3 text-xs font-bold uppercase tracking-widest text-zinc-500">{label}</span>
+    </div>
+);
+
 export default function MaintenancePage() {
     const [timeLeft, setTimeLeft] = useState({
         hours: 2,
@@ -24,15 +34,7 @@ export default function MaintenancePage() {
         return () => clearInterval(timer);
     }, []);
 
-    const TimeUnit = ({ value, label }: { value: number; label: string }) => (
-        <div className="flex flex-col items-center">
-            <div className="relative flex h-20 w-20 items-center justify-center rounded-2xl bg-white/5 border border-white/10 text-3xl font-black text-white sm:h-24 sm:w-24 sm:text-4xl">
-                {value.toString().padStart(2, '0')}
-                <div className="absolute inset-x-0 bottom-0 h-1 bg-primary/30" />
-            </div>
-            <span className="mt-3 text-xs font-bold uppercase tracking-widest text-zinc-500">{label}</span>
-        </div>
-    );
+
 
     return (
         <main className="flex min-h-[70vh] flex-col items-center justify-center px-4 py-20 text-center">

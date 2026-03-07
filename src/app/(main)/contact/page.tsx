@@ -111,7 +111,7 @@ export default function ContactPage() {
     );
 }
 
-function LinkCard({ icon: Icon, title, detail, color }: { icon: any, title: string, detail: string, color: string }) {
+function LinkCard({ icon: Icon, title, detail, color }: { icon: React.ElementType, title: string, detail: string, color: string }) {
     return (
         <a href="#" className="flex items-center gap-4 group">
             <div className={`h-10 w-10 rounded-xl ${color}/20 flex items-center justify-center text-white transition-transform group-hover:scale-110`}>
