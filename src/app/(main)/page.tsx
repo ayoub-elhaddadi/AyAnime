@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { Play, Info, TrendingUp, Calendar, Zap, Smile } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function HomePage() {
     const { data: trending, isLoading: trendingLoading } = useQuery({
@@ -81,9 +82,11 @@ export default function HomePage() {
                                     <Button size="lg" className="rounded-full px-8 shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:cursor-pointer">
                                         <Play className="mr-2 fill-white" size={20} /> Watch Trailer
                                     </Button>
-                                    <Button size="lg" variant="outline" className="rounded-full border-white/10 bg-white/5 px-8 backdrop-blur-md hover:bg-white/10 hover:cursor-pointer">
-                                        <Info className="mr-2" size={20} /> Anime Details
-                                    </Button>
+                                    <Link href={`/anime/${heroAnime.mal_id}`}>
+                                        <Button size="lg" variant="outline" className="rounded-full border-white/10 bg-white/5 px-8 backdrop-blur-md hover:bg-white/10 hover:cursor-pointer">
+                                            <Info className="mr-2" size={20} /> Anime Details
+                                        </Button>
+                                    </Link>
                                 </div>
                             </motion.div>
                         </div>
@@ -129,7 +132,6 @@ export default function HomePage() {
                     isLoading={comedyLoading}
                     icon={<Smile size={20} className="text-primary" />}
                 />
-
             </div>
         </main>
     );
