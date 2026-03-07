@@ -53,7 +53,7 @@ export const ShareMenu = ({ title, url, className }: ShareMenuProps) => {
             await navigator.clipboard.writeText(shareUrl);
             toast.success("Link copied to clipboard!");
             setIsOpen(false);
-        } catch (err) {
+        } catch {
             toast.error("Failed to copy link");
         }
     };

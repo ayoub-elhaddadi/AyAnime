@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { motion } from "framer-motion";
-import { Star, Heart, BookmarkPlus, Share2, Send, MessageSquare, StickyNote, User, BookmarkCheck, ThumbsUp, Reply, Trash2, X, Edit2, PlayCircle } from "lucide-react";
+import { Star, Heart, BookmarkPlus, Send, MessageSquare, StickyNote, User, BookmarkCheck, ThumbsUp, Reply, Trash2, X, Edit2, PlayCircle } from "lucide-react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -18,6 +18,23 @@ import { cn } from "@/lib/utils";
 import { useCollections } from "@/lib/hooks/useCollections";
 import Link from "next/link";
 import { ShareMenu } from "@/components/shared/ShareMenu";
+
+interface Comment {
+    id: string;
+    content: string;
+    user_id: string;
+    parent_id: string | null;
+    created_at: string;
+    updated_at?: string;
+    profiles: {
+        id: string;
+        username: string | null;
+        avatar_url: string | null;
+        role?: string | null;
+    };
+    comment_likes: { user_id: string }[];
+    replies: Comment[];
+}
 
 export default function AnimeDetailsPage() {
     const { id } = useParams();
@@ -53,10 +70,17 @@ export default function AnimeDetailsPage() {
                 .eq("user_id", user?.id as string)
                 .single();
             if (error && error.code !== "PGRST116") throw error;
-            return data;
+            return data as { content: string; updated_at?: string } | null;
         },
-        enabled: !!user?.id && !!animeId,
+        enabled: !!animeId && !!user,
     });
+
+    // Handle initial note content
+    useEffect(() => {
+        if (note?.content && !noteContent) {
+            setNoteContent(note.content);
+        }
+    }, [note?.content, noteContent]);
 
     // Fetch Comments
     const { data: comments } = useQuery({
@@ -68,17 +92,10 @@ export default function AnimeDetailsPage() {
                 .eq("anime_id", animeId)
                 .order("created_at", { ascending: true });
             if (error) throw error;
-            return data;
+            return data as unknown as Comment[];
         },
         enabled: !!animeId,
     });
-
-    useEffect(() => {
-        if (note) {
-            // eslint-disable-next-line react-hooks/set-state-in-effect
-            setNoteContent(note.content);
-        }
-    }, [note]);
 
     // Mutations
     const upsertNote = useMutation({
@@ -172,14 +189,20 @@ export default function AnimeDetailsPage() {
 
     const structuredComments = useMemo(() => {
         if (!comments) return [];
-        const map = new Map();
-        comments.forEach(c => map.set(c.id, { ...c, replies: [] }));
-        const roots: any[] = [];
+        const map = new Map<string, Comment>();
+        comments.forEach(c => map.set(c.id, { ...c, replies: [] } as Comment));
+        const roots: Comment[] = [];
         comments.forEach(c => {
+            const commentObj = map.get(c.id);
+            if (!commentObj) return;
+
             if (c.parent_id) {
-                map.get(c.parent_id)?.replies.push(map.get(c.id));
+                const parent = map.get(c.parent_id);
+                if (parent) {
+                    parent.replies.push(commentObj);
+                }
             } else {
-                roots.push(map.get(c.id));
+                roots.push(commentObj);
             }
         });
         return roots.reverse();
@@ -506,9 +529,26 @@ export default function AnimeDetailsPage() {
     );
 }
 
+interface AuthUser {
+    id: string;
+    email?: string;
+}
+
+interface CommentThreadProps {
+    comment: Comment;
+    user: AuthUser | null;
+    onReply: (id: string, username: string) => void;
+    onToggleLike: (commentId: string, isLiked: boolean) => void;
+    onEdit: (commentId: string, content: string) => void;
+    onDelete: (commentId: string) => void;
+    toggleLikeLoading: boolean;
+    editLoading: boolean;
+    deleteLoading: boolean;
+}
+
 // Comment Thread Component
-const CommentThread = ({ comment, user, onReply, onToggleLike, onEdit, onDelete, toggleLikeLoading, editLoading, deleteLoading }: any) => {
-    const isLiked = user && comment.comment_likes?.some((l: any) => l.user_id === user.id);
+const CommentThread = ({ comment, user, onReply, onToggleLike, onEdit, onDelete, toggleLikeLoading, editLoading, deleteLoading }: CommentThreadProps) => {
+    const isLiked = !!(user && comment.comment_likes?.some((l) => l.user_id === user.id));
     const likeCount = comment.comment_likes?.length || 0;
     const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
@@ -525,10 +565,10 @@ const CommentThread = ({ comment, user, onReply, onToggleLike, onEdit, onDelete,
         }
     }, [isEditing]);
 
-    // Track local content changes from parent updates
-    useEffect(() => {
-        setEditContent(comment.content);
-    }, [comment.content]);
+    // Reset edit content if the comment is being updated from elsewhere while not in active manual edit
+    // Note: To avoid cascading render warning in React, we track if we are currently focused.
+    // However, a cleaner way is to simply remove the useEffect which triggers on every comment content update.
+    // Instead, we will rely on handleSaveEdit and the fact that editContent is initialized with comment.content.
 
     const handleSaveEdit = () => {
         if (!editContent.trim() || editContent === comment.content) {
@@ -558,7 +598,7 @@ const CommentThread = ({ comment, user, onReply, onToggleLike, onEdit, onDelete,
                         <span className="text-[10px] text-zinc-500 uppercase font-bold tracking-widest bg-white/5 px-2 py-0.5 rounded">Member</span>
                     )}
                     <span className="text-xs text-zinc-600 ml-auto flex items-center gap-2">
-                        {comment.updated_at !== comment.created_at && <span className="italic">(edited)</span>}
+                        {comment.updated_at && comment.updated_at !== comment.created_at && <span className="italic">(edited)</span>}
                         {new Date(comment.created_at).toLocaleDateString()}
                     </span>
                 </div>
@@ -653,7 +693,7 @@ const CommentThread = ({ comment, user, onReply, onToggleLike, onEdit, onDelete,
                 {/* Replies */}
                 {comment.replies?.length > 0 && (
                     <div className="mt-4 space-y-4 border-l-2 border-white/5 pl-4 relative">
-                        {comment.replies.map((reply: any) => (
+                        {comment.replies.map((reply) => (
                             <CommentThread
                                 key={reply.id}
                                 comment={reply}
