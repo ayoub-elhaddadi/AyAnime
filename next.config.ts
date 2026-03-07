@@ -20,6 +20,14 @@ const nextConfig: NextConfig = {
         hostname: "irpiuybgnshmoutekaxb.supabase.co",
         pathname: "/storage/v1/object/public/**",
       },
+      {
+        protocol: "https",
+        hostname: "*.fbcdn.net",
+      },
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
+      }
     ],
   },
 };
