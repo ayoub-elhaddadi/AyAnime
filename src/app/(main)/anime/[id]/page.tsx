@@ -70,17 +70,17 @@ export default function AnimeDetailsPage() {
                 .eq("user_id", user?.id as string)
                 .single();
             if (error && error.code !== "PGRST116") throw error;
-            return data as { content: string; updated_at?: string } | null;
+            return data as { id: string; content: string; updated_at?: string } | null;
         },
         enabled: !!animeId && !!user,
     });
 
-    // Handle initial note content
-    useEffect(() => {
-        if (note?.content && !noteContent) {
-            setNoteContent(note.content);
-        }
-    }, [note?.content, noteContent]);
+    // Handle initial note content - set during render if not already set
+    const [lastLoadedNoteId, setLastLoadedNoteId] = useState<string | null>(null);
+    if (note?.id !== lastLoadedNoteId) {
+        setLastLoadedNoteId(note?.id || null);
+        setNoteContent(note?.content || "");
+    }
 
     // Fetch Comments
     const { data: comments } = useQuery({
