@@ -40,19 +40,6 @@ export default function LoginPage() {
     const [loading, setLoading] = useState(false);
     const [oauthLoading, setOauthLoading] = useState<"google" | "facebook" | null>(null);
 
-    const getURL = () => {
-        // Set this to your production URL
-        let url = process?.env?.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000/";
-
-        // Ensure the URL starts with http(s)
-        url = url.includes("http") ? url : `https://${url}`;
-
-        // Ensure a trailing slash
-        url = url.endsWith("/") ? url : `${url}/`;
-
-        return url;
-    };
-
     useEffect(() => {
         supabase.auth.getSession().then(({ data: { session } }) => {
             if (session) router.replace("/");
@@ -88,7 +75,7 @@ export default function LoginPage() {
         setError(null);
         const { error } = await supabase.auth.signInWithOAuth({
             provider,
-            options: { redirectTo: getURL() },
+            options: { redirectTo: "/" },
         });
         if (error) {
             setError(error.message);
