@@ -18,8 +18,16 @@ interface AnimeCardProps {
     year?: number;
 }
 
+import { Anime } from "@/lib/jikan";
+
 export const AnimeCard = ({ id, title, image, rating, status, year }: AnimeCardProps) => {
-    const { isWatchlisted, isFavorited, toggleWatchlist, toggleFavorite } = useCollections(id, { title, image, rating, status, year });
+    const { isWatchlisted, isFavorited, toggleWatchlist, toggleFavorite } = useCollections(id, {
+        title,
+        images: { webp: { image_url: image, large_image_url: image } },
+        score: rating,
+        status,
+        year
+    } as unknown as Anime);
 
     return (
         <motion.div
