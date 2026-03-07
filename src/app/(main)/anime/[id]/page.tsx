@@ -17,6 +17,7 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { useCollections } from "@/lib/hooks/useCollections";
 import Link from "next/link";
+import { ShareMenu } from "@/components/shared/ShareMenu";
 
 export default function AnimeDetailsPage() {
     const { id } = useParams();
@@ -251,9 +252,7 @@ export default function AnimeDetailsPage() {
                                 >
                                     <Heart size={18} className={isFavorited ? "fill-current" : ""} /> Favorite
                                 </Button>
-                                <Button variant="outline" size="icon" className="bg-white/5 border-white/10 rounded-lg hover:cursor-pointer">
-                                    <Share2 size={18} />
-                                </Button>
+                                <ShareMenu title={anime?.title || "Anime"} />
                             </div>
                         </div>
 
