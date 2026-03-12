@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Menu, X, User, LogOut, Shield, Heart, Bookmark, LayoutGrid, LogIn, UserPlus, User2 } from "lucide-react";
+import { Search, Menu, X, User, LogOut, Shield, Heart, Bookmark, LayoutGrid, LogIn, UserPlus } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -115,10 +115,16 @@ export const Navbar = () => {
                         </div>
                     ) : (
                         <div className="flex items-center gap-2">
-                            <Button asChild className="hidden sm:flex rounded-full px-6 shadow-lg shadow-primary/20 gap-2">
+                            <Button variant="ghost" asChild className="hidden sm:flex text-zinc-300 hover:text-white gap-2">
                                 <Link href="/login">
-                                    <User2 size={18} />
-                                    Sign In
+                                    <LogIn size={18} />
+                                    Login
+                                </Link>
+                            </Button>
+                            <Button asChild className="rounded-full px-6 shadow-lg shadow-primary/20 gap-2">
+                                <Link href="/signup">
+                                    <UserPlus size={18} />
+                                    Sign Up
                                 </Link>
                             </Button>
                         </div>
