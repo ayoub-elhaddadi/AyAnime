@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { motion } from "framer-motion";
-import { Star, Heart, BookmarkPlus, Send, MessageSquare, StickyNote, User, BookmarkCheck, ThumbsUp, Reply, Trash2, X, Edit2 } from "lucide-react";
+import { Star, Heart, BookmarkPlus, Send, MessageSquare, StickyNote, User, BookmarkCheck, ThumbsUp, Reply, Trash2, X, Edit2, Search } from "lucide-react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -18,6 +18,8 @@ import { cn } from "@/lib/utils";
 import { useCollections } from "@/lib/hooks/useCollections";
 import Link from "next/link";
 import { ShareMenu } from "@/components/shared/ShareMenu";
+import { Play, Calendar, Info, List } from "lucide-react";
+import type { Episode } from "@/types/Anime";
 
 
 interface Comment {
@@ -45,7 +47,10 @@ export default function AnimeDetailsPage() {
 
     const [commentContent, setCommentContent] = useState("");
     const [replyingTo, setReplyingTo] = useState<{ id: string, username: string } | null>(null);
-    const [activeTab, setActiveTab] = useState("overview");
+    const [activeTab, setActiveTab] = useState("episodes");
+    const [searchQuery, setSearchQuery] = useState("");
+    const [visibleCount, setVisibleCount] = useState(30);
+    const observerTarget = useRef<HTMLDivElement>(null);
 
 
     // Fetch Anime Details
@@ -56,6 +61,43 @@ export default function AnimeDetailsPage() {
     });
 
     const anime = animeResp?.data;
+
+    // Fetch Episodes
+    const { data: episodesResp, isLoading: episodesLoading } = useQuery({
+        queryKey: ["episodes", animeId],
+        queryFn: () => animeService.getEpisodes(animeId),
+        enabled: !!animeId,
+    });
+
+    const episodes = episodesResp?.data || [];
+
+    const filteredEpisodes = useMemo(() => {
+        return episodes.filter(ep =>
+            ep.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            ep.episodeNumber.toString() === searchQuery
+        );
+    }, [episodes, searchQuery]);
+
+    const visibleEpisodes = useMemo(() => {
+        return filteredEpisodes.slice(0, visibleCount);
+    }, [filteredEpisodes, visibleCount]);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries[0].isIntersecting && visibleCount < filteredEpisodes.length) {
+                    setVisibleCount(prev => prev + 30);
+                }
+            },
+            { threshold: 0.1 }
+        );
+
+        if (observerTarget.current) {
+            observer.observe(observerTarget.current);
+        }
+
+        return () => observer.disconnect();
+    }, [filteredEpisodes.length, visibleCount]);
 
     const { isWatchlisted, isFavorited, toggleWatchlist, toggleFavorite, upsertAnime } = useCollections(animeId, anime);
 
@@ -322,9 +364,10 @@ export default function AnimeDetailsPage() {
 
                             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                                 <TabsList className="bg-transparent border-b border-white/5 w-full justify-start rounded-none h-12 p-0 gap-8">
-                                    <TabsTrigger value="overview" className="data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-0 text-base">Overview</TabsTrigger>
-                                    <TabsTrigger value="discussions" className="data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-0 text-base">Discussions</TabsTrigger>
-                                    <TabsTrigger value="my-notes" className="data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-0 text-base">My Notes</TabsTrigger>
+                                    <TabsTrigger value="episodes" className="data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-0 text-base hover:cursor-pointer">Episodes</TabsTrigger>
+                                    <TabsTrigger value="overview" className="data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-0  hover:cursor-pointer">Overview</TabsTrigger>
+                                    <TabsTrigger value="discussions" className="data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-0  hover:cursor-pointer">Discussions</TabsTrigger>
+                                    <TabsTrigger value="my-notes" className="data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-0  hover:cursor-pointer">My Notes</TabsTrigger>
                                 </TabsList>
 
                                 <TabsContent value="overview" className="pt-6">
@@ -350,6 +393,104 @@ export default function AnimeDetailsPage() {
                                                 <p className="text-zinc-500 text-sm leading-relaxed">{anime.aired?.from} — {anime.aired?.to || "Ongoing"}</p>
                                             </div>
                                         </div>
+                                    </div>
+                                </TabsContent>
+
+                                <TabsContent value="episodes" className="pt-6">
+                                    <div className="space-y-6">
+                                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                            <div>
+                                                <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                                                    <List size={20} className="text-primary" /> Episode List
+                                                </h3>
+                                                <p className="text-xs text-zinc-500 mt-1 font-medium">
+                                                    Showing {visibleEpisodes.length} of {filteredEpisodes.length} episodes
+                                                </p>
+                                            </div>
+
+                                            <div className="relative w-full md:w-80 group">
+                                                <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none text-zinc-500 group-focus-within:text-primary transition-colors">
+                                                    <Search size={18} />
+                                                </div>
+                                                <input
+                                                    type="text"
+                                                    placeholder="Search episode title or number..."
+                                                    value={searchQuery}
+                                                    onChange={(e) => {
+                                                        setSearchQuery(e.target.value);
+                                                        setVisibleCount(30);
+                                                    }}
+                                                    className="w-full bg-zinc-900 border border-white/5 rounded-xl py-2.5 pl-10 pr-4 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:ring-1 focus:ring-primary/50 transition-all"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        {episodesLoading ? (
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                                                {[...Array(9)].map((_, i) => (
+                                                    <div key={i} className="h-24 rounded-xl bg-white/5 animate-pulse" />
+                                                ))}
+                                            </div>
+                                        ) : filteredEpisodes.length > 0 ? (
+                                            <>
+                                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                                                    {visibleEpisodes.map((ep) => (
+                                                        <Link
+                                                            key={ep.id}
+                                                            href={`/watch/${ep.id}`}
+                                                            className="group relative flex items-center gap-4 rounded-xl bg-zinc-900/50 backdrop-blur-md border border-white/5 p-3 transition-all hover:border-primary/50 hover:bg-primary/5 hover:scale-[1.02] active:scale-[0.98] hover:cursor-pointer overflow-hidden shadow-lg"
+                                                        >
+                                                            <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+
+                                                            <div className="relative shrink-0 w-12 h-12 flex items-center justify-center rounded-lg bg-zinc-950 border border-white/5 group-hover:border-primary/30 transition-colors">
+                                                                <span className="text-lg font-black text-zinc-500 group-hover:text-primary transition-colors italic">
+                                                                    {ep.episodeNumber}
+                                                                </span>
+                                                            </div>
+
+                                                            <div className="relative flex-1 min-w-0">
+                                                                <h4 className="text-sm font-bold text-white truncate group-hover:text-primary transition-colors">
+                                                                    {ep.title || `Episode ${ep.episodeNumber}`}
+                                                                </h4>
+                                                                <div className="flex items-center gap-2 mt-1">
+                                                                    <span className="text-[10px] uppercase font-bold tracking-widest text-zinc-600 group-hover:text-zinc-500">
+                                                                        Stream Now
+                                                                    </span>
+                                                                    {ep.isFiller && (
+                                                                        <span className="px-1.5 py-0.5 rounded text-[8px] font-bold uppercase bg-yellow-500/10 text-yellow-500 border border-yellow-500/20">
+                                                                            Filler
+                                                                        </span>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+
+                                                            <div className="relative shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                                <Play size={16} className="text-primary" />
+                                                            </div>
+                                                        </Link>
+                                                    ))}
+                                                </div>
+
+                                                {/* Infinite Scroll Trigger */}
+                                                <div ref={observerTarget} className="h-10 w-full flex items-center justify-center">
+                                                    {visibleCount < filteredEpisodes.length && (
+                                                        <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                                                    )}
+                                                </div>
+                                            </>
+                                        ) : (
+                                            <div className="text-center py-20 border border-dashed border-white/10 rounded-2xl bg-white/5">
+                                                <Search size={40} className="text-zinc-800 mx-auto mb-4" />
+                                                <p className="text-zinc-500 font-medium">No episodes match your search.</p>
+                                                <Button
+                                                    variant="ghost"
+                                                    className="mt-2 text-primary hover:bg-primary/5"
+                                                    onClick={() => setSearchQuery("")}
+                                                >
+                                                    Clear Search
+                                                </Button>
+                                            </div>
+                                        )}
                                     </div>
                                 </TabsContent>
 

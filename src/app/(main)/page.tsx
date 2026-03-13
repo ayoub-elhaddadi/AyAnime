@@ -92,14 +92,6 @@ export default function HomePage() {
                         icon={<PlayCircle size={24} className="text-primary" />}
                     />
 
-                    {/* <AnimeCarousel
-                        title="Trending Anime"
-                        description="Rolling with the most popular series right now"
-                        data={home?.trending}
-                        isLoading={homeLoading}
-                        icon={<Flame size={24} className="text-orange-500 shadow-[0_0_15px_rgba(249,115,22,0.4)]" />}
-                    /> */}
-
                     <AnimeCarousel
                         title="New Added"
                         description="Fresh additions to our growing collection"
@@ -114,14 +106,6 @@ export default function HomePage() {
                         data={home?.spotlight}
                         isLoading={homeLoading}
                         icon={<Star size={24} className="text-yellow-400 fill-yellow-400 shadow-[0_0_15px_rgba(250,204,21,0.4)]" />}
-                    />
-
-                    <AnimeCarousel
-                        title="Completed Hits"
-                        description="Binge-ready: Series that just finished airing"
-                        data={home?.latestCompleted}
-                        isLoading={homeLoading}
-                        icon={<CheckCircle2 size={24} className="text-green-500 shadow-[0_0_15px_rgba(34,197,94,0.4)]" />}
                     />
 
                     <AnimeCarousel
