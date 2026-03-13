@@ -163,7 +163,7 @@ export const Navbar = () => {
                                     {searchLoading ? (
                                         <div className="p-10 flex flex-col items-center justify-center text-zinc-500 space-y-3">
                                             <Loader2 size={24} className="animate-spin text-primary" />
-                                            <span className="text-sm font-medium">Searching for "{searchQuery}"...</span>
+                                            <span className="text-sm font-medium">Searching for &quot;{searchQuery}&quot;...</span>
                                         </div>
                                     ) : searchResults?.data?.response && searchResults.data.response.length > 0 ? (
                                         <div className="flex flex-col gap-1">
@@ -204,7 +204,7 @@ export const Navbar = () => {
                                                 <Search size={20} className="text-zinc-500" />
                                             </div>
                                             <p className="text-zinc-400 font-medium text-sm">No results found for</p>
-                                            <p className="text-white font-bold mt-1 max-w-[80%] truncate">"{searchQuery}"</p>
+                                            <p className="text-white font-bold mt-1 max-w-[80%] truncate">&quot;{searchQuery}&quot;</p>
                                         </div>
                                     )}
                                 </div>
