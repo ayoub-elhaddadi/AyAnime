@@ -5,12 +5,12 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AnimeCard } from "./AnimeCard";
 import { cn } from "@/lib/utils";
-import { Anime } from "@/lib/jikan";
+import type { AnimeWithEpisodes } from "@/types/Anime";
 
 interface AnimeCarouselProps {
     title: string;
     description?: string;
-    data?: Anime[];
+    data?: AnimeWithEpisodes[];
     isLoading: boolean;
     icon?: React.ReactNode;
 }
@@ -97,14 +97,13 @@ export const AnimeCarousel = ({ title, description, data, isLoading, icon }: Ani
                     ))
                 ) : (
                     data?.map(anime => (
-                        <div key={anime.mal_id} className="min-w-[160px] md:min-w-[200px]">
+                        <div key={anime.id} className="min-w-[160px] md:min-w-[200px]">
                             <AnimeCard
-                                id={anime.mal_id}
+                                id={anime.id}
                                 title={anime.title}
-                                image={anime.images.webp.large_image_url}
-                                rating={anime.score}
-                                year={anime.year}
-                                status={anime.status}
+                                image={anime.poster}
+                                type={anime.type}
+                                status={anime.duration}
                             />
                         </div>
                     ))

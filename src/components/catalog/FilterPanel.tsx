@@ -10,8 +10,7 @@ interface FilterPanelProps {
     filters: {
         status: string;
         type: string;
-        order_by: string;
-        sort: "asc" | "desc";
+        sort: string;
     };
     onFilterChange: (key: string, value: string) => void;
     onReset: () => void;
@@ -35,15 +34,15 @@ export function FilterPanel({
                     transition={{ duration: 0.3, ease: "easeInOut" }}
                     className="mb-8 overflow-hidden rounded-2xl bg-zinc-900/30 border border-white/5 backdrop-blur-sm"
                 >
-                    <div className="grid grid-cols-1 gap-5 p-6 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5">
+                    <div className="grid grid-cols-1 gap-5 p-6 sm:grid-cols-2 md:grid-cols-4">
                         <FilterSelect
                             label="Status"
                             value={filters.status}
                             options={[
                                 { label: "All Statuses", value: "" },
                                 { label: "Airing", value: "airing" },
-                                { label: "Complete", value: "complete" },
-                                { label: "Upcoming", value: "upcoming" },
+                                { label: "Finished Airing", value: "finished-airing" },
+                                { label: "Not Yet Aired", value: "not-yet-aired" },
                             ]}
                             onChange={(val) => onFilterChange("status", val)}
                         />
@@ -61,22 +60,15 @@ export function FilterPanel({
                             onChange={(val) => onFilterChange("type", val)}
                         />
                         <FilterSelect
-                            label="Order By"
-                            value={filters.order_by}
-                            options={[
-                                { label: "Popularity", value: "popularity" },
-                                { label: "Score", value: "score" },
-                                { label: "Title", value: "title" },
-                                { label: "Release Date", value: "start_date" },
-                            ]}
-                            onChange={(val) => onFilterChange("order_by", val)}
-                        />
-                        <FilterSelect
-                            label="Sort Direction"
+                            label="Sort By"
                             value={filters.sort}
                             options={[
-                                { label: "Descending", value: "desc" },
-                                { label: "Ascending", value: "asc" },
+                                { label: "Default", value: "" },
+                                { label: "Recently Added", value: "recently-added" },
+                                { label: "Recently Updated", value: "recently-updated" },
+                                { label: "Score", value: "score" },
+                                { label: "Name (A-Z)", value: "name-az" },
+                                { label: "Most Watched", value: "most-watched" },
                             ]}
                             onChange={(val) => onFilterChange("sort", val)}
                         />

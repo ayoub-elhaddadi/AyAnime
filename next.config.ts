@@ -5,18 +5,6 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "myanimelist.net",
-      },
-      {
-        protocol: "https",
-        hostname: "cdn.myanimelist.net",
-      },
-      {
-        protocol: "https",
-        hostname: "img.myanimelist.net",
-      },
-      {
-        protocol: "https",
         hostname: "irpiuybgnshmoutekaxb.supabase.co",
         pathname: "/storage/v1/object/public/**",
       },
@@ -27,7 +15,11 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "lh3.googleusercontent.com",
-      }
+      },
+      {
+        protocol: "https",
+        hostname: "*.noitatnemucod.net",
+      },
     ],
   },
 };

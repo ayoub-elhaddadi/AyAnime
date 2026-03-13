@@ -8,25 +8,25 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useCollections } from "@/lib/hooks/useCollections";
 import { cn } from "@/lib/utils";
-import { Anime } from "@/lib/jikan";
+import type { AnimeInfo } from "@/types/Anime";
 
 interface AnimeCardProps {
-    id: number;
+    id: string;
     title: string;
     image: string;
-    rating?: number;
+    rating?: string;
     status?: string;
-    year?: number;
+    type?: string;
 }
 
-export const AnimeCard = ({ id, title, image, rating, status, year }: AnimeCardProps) => {
+export const AnimeCard = ({ id, title, image, rating, status, type }: AnimeCardProps) => {
     const { isWatchlisted, isFavorited, toggleWatchlist, toggleFavorite } = useCollections(id, {
         title,
-        images: { webp: { image_url: image, large_image_url: image } },
-        score: rating,
+        poster: image,
+        MAL_score: rating || "0",
         status,
-        year
-    } as unknown as Anime);
+        type,
+    } as unknown as AnimeInfo);
 
     return (
         <motion.div
@@ -56,7 +56,7 @@ export const AnimeCard = ({ id, title, image, rating, status, year }: AnimeCardP
                         )}
 
                         {/* Rating */}
-                        {rating && (
+                        {rating && rating !== "0" && (
                             <div className="absolute right-2 top-2 flex items-center gap-1 rounded bg-black/60 px-2 py-1 backdrop-blur-md">
                                 <Star size={12} className="fill-yellow-400 text-yellow-400" />
                                 <span className="text-xs font-bold text-white">{rating}</span>
@@ -117,7 +117,7 @@ export const AnimeCard = ({ id, title, image, rating, status, year }: AnimeCardP
                             {title}
                         </h3>
                         <div className="mt-1 flex items-center justify-between text-[11px] text-zinc-400">
-                            <span>{year || "TBA"}</span>
+                            <span>{type || "Anime"}</span>
                             <span>Anime</span>
                         </div>
                     </div>

@@ -165,10 +165,10 @@ export default function ProfilePage() {
                                         key={item.anime_id}
                                         id={item.anime_id}
                                         title={item.animes.title}
-                                        image={item.animes.image_url || ""}
-                                        rating={item.animes.score || 0}
+                                        image={item.animes.poster || ""}
+                                        rating={item.animes.MAL_score || "0"}
                                         status={item.animes.status || ""}
-                                        year={item.animes.year || 0}
+                                        type={item.animes.type || ""}
                                     />
                                 ))
                             ) : (
@@ -199,10 +199,10 @@ export default function ProfilePage() {
                                         key={item.anime_id}
                                         id={item.anime_id}
                                         title={item.animes.title}
-                                        image={item.animes.image_url || ""}
-                                        rating={item.animes.score || 0}
+                                        image={item.animes.poster || ""}
+                                        rating={item.animes.MAL_score || "0"}
                                         status={item.animes.status || ""}
-                                        year={item.animes.year || 0}
+                                        type={item.animes.type || ""}
                                     />
                                 ))
                             ) : (

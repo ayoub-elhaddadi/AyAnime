@@ -5,9 +5,9 @@ import { supabase } from "@/lib/supabase";
 import { useAuthStore } from "@/store/useAuthStore";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { Anime } from "../jikan";
+import type { AnimeInfo } from "@/types/Anime";
 
-export function useCollections(animeId: number, animeData?: Anime) {
+export function useCollections(animeId: string, animeData?: AnimeInfo) {
     const { user } = useAuthStore();
     const queryClient = useQueryClient();
     const router = useRouter();
@@ -20,15 +20,22 @@ export function useCollections(animeId: number, animeData?: Anime) {
             .upsert({
                 id: animeId,
                 title: animeData.title || "Unknown Title",
-                image_url: animeData.images?.webp?.image_url || animeData.images?.webp?.large_image_url,
-                score: animeData.score,
-                episodes: animeData.episodes,
+                alternativeTitle: animeData.alternativeTitle || animeData.title,
+                poster: animeData.poster,
+                rating: animeData.rating || "",
+                MAL_score: animeData.MAL_score || "N/A",
+                episodes: animeData.episodes?.eps ?? null,
                 status: animeData.status,
-                year: animeData.year,
+                type: animeData.type,
+                is18Plus: animeData.is18Plus ?? false,
                 synopsis: animeData.synopsis,
-                season: animeData.season,
+                synonyms: animeData.synonyms,
+                aired: animeData.aired,
+                premiered: animeData.premiered,
+                duration: animeData.duration,
                 genres: animeData.genres,
-                updated_at: new Date().toISOString(),
+                studios: animeData.studios,
+                producers: animeData.producers,
             });
 
         if (error) {
@@ -57,13 +64,14 @@ export function useCollections(animeId: number, animeData?: Anime) {
     const { data: isFavorited } = useQuery({
         queryKey: ["is_favorited", animeId, user?.id],
         queryFn: async () => {
+            if (!user?.id) return false;
             const { data, error } = await supabase
                 .from("favorites")
                 .select("*")
                 .eq("anime_id", animeId)
-                .eq("user_id", user?.id as string)
-                .single();
-            if (error && error.code !== "PGRST116") throw error;
+                .eq("user_id", user.id)
+                .maybeSingle();
+            if (error) throw error;
             return !!data;
         },
         enabled: !!user?.id && !!animeId,
@@ -76,7 +84,6 @@ export function useCollections(animeId: number, animeData?: Anime) {
                 throw new Error("Authentication required");
             }
 
-            // Ensure anime exists in our DB first
             await upsertAnime();
 
             if (watchlistStatus) {
@@ -139,7 +146,6 @@ export function useCollections(animeId: number, animeData?: Anime) {
                 .update({
                     episode_progress: newProgress,
                     updated_at: new Date().toISOString(),
-                    // If progress starts, move to watching automatically
                     ...(newProgress > 0 && watchlistStatus?.status === "planned" ? { status: "watching" } : {})
                 })
                 .eq("anime_id", animeId)
@@ -162,7 +168,6 @@ export function useCollections(animeId: number, animeData?: Anime) {
                 throw new Error("Authentication required");
             }
 
-            // Ensure anime exists in our DB first
             await upsertAnime();
 
             if (isFavorited) {

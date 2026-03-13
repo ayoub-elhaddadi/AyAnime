@@ -67,8 +67,8 @@ export default function FavoritesPage() {
                                 key={item.anime_id}
                                 id={item.anime_id}
                                 title={item.animes.title}
-                                image={item.animes.image_url || "/placeholder.jpg"}
-                                rating={item.animes.score || 0}
+                                image={item.animes.poster || "/placeholder.png"}
+                                rating={item.animes.MAL_score || "N/A"}
                             />
                         ))}
                     </div>

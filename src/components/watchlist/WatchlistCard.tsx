@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { useCollections } from "@/lib/hooks/useCollections";
 import { cn } from "@/lib/utils";
 import { WatchlistItemWithAnime } from "./WatchlistBoard";
-import { Anime } from "@/lib/jikan";
+import type { AnimeInfo } from "@/types/Anime";
 
 interface WatchlistCardProps {
     item: WatchlistItemWithAnime;
@@ -18,7 +18,7 @@ interface WatchlistCardProps {
 
 export const WatchlistCard = ({ item }: WatchlistCardProps) => {
     const anime = item.animes;
-    const { updateWatchlistStatus, updateWatchlistProgress, toggleWatchlist } = useCollections(item.anime_id, anime as unknown as Anime);
+    const { updateWatchlistStatus, updateWatchlistProgress, toggleWatchlist } = useCollections(item.anime_id, anime as unknown as AnimeInfo);
 
     const statusColors: Record<string, string> = {
         planned: "bg-zinc-800 text-zinc-400",
@@ -48,7 +48,7 @@ export const WatchlistCard = ({ item }: WatchlistCardProps) => {
                     {/* Image Thumb */}
                     <div className="relative h-24 w-16 flex-shrink-0 overflow-hidden rounded-lg shadow-md">
                         <Image
-                            src={anime.image_url || "/placeholder.jpg"}
+                            src={anime.poster || "/placeholder.png"}
                             alt={anime.title}
                             fill
                             className="object-cover"
@@ -69,7 +69,7 @@ export const WatchlistCard = ({ item }: WatchlistCardProps) => {
                                     {item.status}
                                 </Badge>
                                 <span className="text-[11px] text-zinc-500 font-medium">
-                                    {anime.year} • {anime.season || "N/A"}
+                                    {anime.type || "TV"} • {anime.status || "N/A"}
                                 </span>
                             </div>
                         </div>

@@ -31,7 +31,7 @@ export const WatchlistColumn = ({ title, items, status }: WatchlistColumnProps) 
             const { error } = await supabase
                 .from("watchlist")
                 .update({ status, updated_at: new Date().toISOString() })
-                .eq("anime_id", parseInt(animeId))
+                .eq("anime_id", animeId)
                 .eq("user_id", user?.id as string);
 
             if (error) throw error;

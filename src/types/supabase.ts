@@ -11,46 +11,64 @@ export type Database = {
         Tables: {
             animes: {
                 Row: {
-                    banner_url: string | null
-                    episodes: number | null
-                    genres: Json | null
-                    id: number
-                    image_url: string | null
-                    score: number | null
-                    season: string | null
-                    status: string | null
-                    synopsis: string | null
+                    id: string
                     title: string
-                    updated_at: string
-                    year: number | null
+                    alternativeTitle: string | null
+                    poster: string | null
+                    episodes: number | null
+                    rating: string | null
+                    type: string | null
+                    is18Plus: boolean
+                    synopsis: string | null
+                    synonyms: string | null
+                    aired: Json | null
+                    premiered: string | null
+                    duration: string | null
+                    status: string | null
+                    MAL_score: string | null
+                    genres: Json | null
+                    studios: Json | null
+                    producers: Json | null
                 }
                 Insert: {
-                    banner_url?: string | null
-                    episodes?: number | null
-                    genres?: Json | null
-                    id: number
-                    image_url?: string | null
-                    score?: number | null
-                    season?: string | null
-                    status?: string | null
-                    synopsis?: string | null
+                    id: string
                     title: string
-                    updated_at?: string
-                    year?: number | null
+                    alternativeTitle?: string | null
+                    poster?: string | null
+                    episodes?: number | null
+                    rating?: string | null
+                    type?: string | null
+                    is18Plus?: boolean
+                    synopsis?: string | null
+                    synonyms?: string | null
+                    aired?: Json | null
+                    premiered?: string | null
+                    duration?: string | null
+                    status?: string | null
+                    MAL_score?: string | null
+                    genres?: Json | null
+                    studios?: Json | null
+                    producers?: Json | null
                 }
                 Update: {
-                    banner_url?: string | null
-                    episodes?: number | null
-                    genres?: Json | null
-                    id?: number
-                    image_url?: string | null
-                    score?: number | null
-                    season?: string | null
-                    status?: string | null
-                    synopsis?: string | null
+                    id?: string
                     title?: string
-                    updated_at?: string
-                    year?: number | null
+                    alternativeTitle?: string | null
+                    poster?: string | null
+                    episodes?: number | null
+                    rating?: string | null
+                    type?: string | null
+                    is18Plus?: boolean
+                    synopsis?: string | null
+                    synonyms?: string | null
+                    aired?: Json | null
+                    premiered?: string | null
+                    duration?: string | null
+                    status?: string | null
+                    MAL_score?: string | null
+                    genres?: Json | null
+                    studios?: Json | null
+                    producers?: Json | null
                 }
                 Relationships: []
             }
@@ -86,7 +104,7 @@ export type Database = {
             }
             comments: {
                 Row: {
-                    anime_id: number
+                    anime_id: string
                     content: string
                     created_at: string
                     id: string
@@ -94,7 +112,7 @@ export type Database = {
                     user_id: string
                 }
                 Insert: {
-                    anime_id: number
+                    anime_id: string
                     content: string
                     created_at?: string
                     id?: string
@@ -102,7 +120,7 @@ export type Database = {
                     user_id: string
                 }
                 Update: {
-                    anime_id?: number
+                    anime_id?: string
                     content?: string
                     created_at?: string
                     id?: string
@@ -135,17 +153,17 @@ export type Database = {
             }
             favorites: {
                 Row: {
-                    anime_id: number
+                    anime_id: string
                     created_at: string
                     user_id: string
                 }
                 Insert: {
-                    anime_id: number
+                    anime_id: string
                     created_at?: string
                     user_id: string
                 }
                 Update: {
-                    anime_id?: number
+                    anime_id?: string
                     created_at?: string
                     user_id?: string
                 }
@@ -168,21 +186,21 @@ export type Database = {
             }
             notes: {
                 Row: {
-                    anime_id: number
+                    anime_id: string
                     content: string
                     id: string
                     updated_at: string
                     user_id: string
                 }
                 Insert: {
-                    anime_id: number
+                    anime_id: string
                     content: string
                     id?: string
                     updated_at?: string
                     user_id: string
                 }
                 Update: {
-                    anime_id?: number
+                    anime_id?: string
                     content?: string
                     id?: string
                     updated_at?: string
@@ -276,21 +294,21 @@ export type Database = {
             }
             watchlist: {
                 Row: {
-                    anime_id: number
+                    anime_id: string
                     episode_progress: number | null
                     status: string | null
                     updated_at: string
                     user_id: string
                 }
                 Insert: {
-                    anime_id: number
+                    anime_id: string
                     episode_progress?: number | null
                     status?: string | null
                     updated_at?: string
                     user_id: string
                 }
                 Update: {
-                    anime_id?: number
+                    anime_id?: string
                     episode_progress?: number | null
                     status?: string | null
                     updated_at?: string

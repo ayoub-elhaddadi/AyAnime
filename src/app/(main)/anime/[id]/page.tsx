@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { animeService } from "@/lib/jikan";
+import { animeService } from "@/lib/api";
 import { Navbar } from "@/components/shared/Navbar";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -39,7 +39,7 @@ interface Comment {
 
 export default function AnimeDetailsPage() {
     const { id } = useParams();
-    const animeId = Number(id);
+    const animeId = id as string;
     const { user, profile } = useAuthStore();
     const queryClient = useQueryClient();
 
@@ -220,7 +220,7 @@ export default function AnimeDetailsPage() {
             {/* Header Banner */}
             <div className="relative h-[400px] w-full">
                 <Image
-                    src={anime.images.webp.large_image_url}
+                    src={anime.poster}
                     alt={anime.title}
                     fill
                     className="object-cover opacity-20 blur-sm"
@@ -240,7 +240,7 @@ export default function AnimeDetailsPage() {
                             className="relative aspect-[3/4] overflow-hidden rounded-xl shadow-2xl ring-1 ring-white/10"
                         >
                             <Image
-                                src={anime.images.webp.large_image_url}
+                                src={anime.poster}
                                 alt={anime.title}
                                 fill
                                 className="object-cover"
@@ -282,20 +282,20 @@ export default function AnimeDetailsPage() {
                                 <span className="text-zinc-400">Score</span>
                                 <div className="flex items-center gap-1 text-white font-bold">
                                     <Star size={14} className="fill-yellow-400 text-yellow-400" />
-                                    <span>{anime.score}</span>
+                                    <span>{anime.MAL_score}</span>
                                 </div>
                             </div>
                             <div className="flex items-center justify-between text-sm">
                                 <span className="text-zinc-400">Episodes</span>
-                                <span className="text-white font-medium">{anime.episodes || "TBA"}</span>
+                                <span className="text-white font-medium">{anime.episodes?.eps || "TBA"}</span>
                             </div>
                             <div className="flex items-center justify-between text-sm">
                                 <span className="text-zinc-400">Status</span>
                                 <span className="text-white font-medium">{anime.status}</span>
                             </div>
                             <div className="flex items-center justify-between text-sm">
-                                <span className="text-zinc-400">Season</span>
-                                <span className="text-white font-medium">{anime.season} {anime.year}</span>
+                                <span className="text-zinc-400">Premiered</span>
+                                <span className="text-white font-medium">{anime.premiered || "N/A"}</span>
                             </div>
                         </div>
                     </div>
@@ -310,12 +310,12 @@ export default function AnimeDetailsPage() {
                             <h1 className="text-4xl md:text-5xl font-black text-white mb-4">
                                 {anime.title}
                             </h1>
-                            <p className="text-xl text-zinc-400 italic mb-6">{anime.title_japanese}</p>
+                            <p className="text-xl text-zinc-400 italic mb-6">{anime.alternativeTitle}</p>
 
                             <div className="flex flex-wrap gap-2 mb-8">
-                                {anime.genres.map(genre => (
-                                    <span key={genre.mal_id} className="rounded-full bg-zinc-800 px-4 py-1.5 text-xs font-semibold text-zinc-300">
-                                        {genre.name}
+                                {anime.genres?.map((genre, idx) => (
+                                    <span key={idx} className="rounded-full bg-zinc-800 px-4 py-1.5 text-xs font-semibold text-zinc-300">
+                                        {genre}
                                     </span>
                                 ))}
                             </div>
@@ -338,15 +338,16 @@ export default function AnimeDetailsPage() {
                                             <div className="space-y-4 text-sm">
                                                 <h4 className="text-lg font-bold text-white uppercase tracking-wider text-xs">Information</h4>
                                                 <div className="space-y-2">
-                                                    <p><span className="text-zinc-500">Source:</span> <span className="text-zinc-300">{anime.source}</span></p>
-                                                    <p><span className="text-zinc-500">Studio:</span> <span className="text-zinc-300">{anime.studios?.map(s => s.name).join(", ")}</span></p>
+                                                    <p><span className="text-zinc-500">Type:</span> <span className="text-zinc-300">{anime.type}</span></p>
+                                                    <p><span className="text-zinc-500">Studio:</span> <span className="text-zinc-300">{anime.studios?.join(", ")}</span></p>
                                                     <p><span className="text-zinc-500">Rating:</span> <span className="text-zinc-300">{anime.rating}</span></p>
                                                     <p><span className="text-zinc-500">Duration:</span> <span className="text-zinc-300">{anime.duration}</span></p>
+                                                    <p><span className="text-zinc-500">Producers:</span> <span className="text-zinc-300">{anime.producers?.join(", ")}</span></p>
                                                 </div>
                                             </div>
                                             <div className="space-y-4">
-                                                <h4 className="text-lg font-bold text-white uppercase tracking-wider text-xs">Background</h4>
-                                                <p className="text-zinc-500 text-sm leading-relaxed">{anime.background || "No background information available."}</p>
+                                                <h4 className="text-lg font-bold text-white uppercase tracking-wider text-xs">Aired</h4>
+                                                <p className="text-zinc-500 text-sm leading-relaxed">{anime.aired?.from} — {anime.aired?.to || "Ongoing"}</p>
                                             </div>
                                         </div>
                                     </div>

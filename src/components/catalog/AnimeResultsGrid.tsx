@@ -1,10 +1,10 @@
 "use client";
 
 import { AnimeCard } from "@/components/anime/AnimeCard";
-import { Anime } from "@/lib/jikan";
+import type { AnimeWithEpisodes } from "@/types/Anime";
 
 interface AnimeResultsGridProps {
-    animeList?: Anime[];
+    animeList?: AnimeWithEpisodes[];
     isLoading: boolean;
     skeletonCount?: number;
 }
@@ -41,22 +41,20 @@ export function AnimeResultsGrid({
         );
     }
 
-    // Filter duplicates by mal_id
+    // Filter duplicates by id
     const uniqueAnime = animeList.filter((anime, index, self) =>
-        index === self.findIndex((a) => a.mal_id === anime.mal_id)
+        index === self.findIndex((a) => a.id === anime.id)
     );
 
     return (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 sm:gap-6">
             {uniqueAnime.map((anime) => (
                 <AnimeCard
-                    key={anime.mal_id}
-                    id={anime.mal_id}
+                    key={anime.id}
+                    id={anime.id}
                     title={anime.title}
-                    image={anime.images.webp.large_image_url}
-                    rating={anime.score}
-                    year={anime.year}
-                    status={anime.status}
+                    image={anime.poster}
+                    type={anime.type}
                 />
             ))}
         </div>

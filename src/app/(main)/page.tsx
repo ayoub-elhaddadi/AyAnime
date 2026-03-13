@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { animeService } from "@/lib/jikan";
+import { animeService } from "@/lib/api";
 import { AnimeCarousel } from "@/components/anime/AnimeCarousel";
 import { Navbar } from "@/components/shared/Navbar";
 import { Button } from "@/components/ui/button";
@@ -11,27 +11,13 @@ import Image from "next/image";
 import Link from "next/link";
 
 export default function HomePage() {
-    const { data: trending, isLoading: trendingLoading } = useQuery({
-        queryKey: ["trending"],
-        queryFn: () => animeService.getTopAnime(1),
+    const { data: homeData, isLoading: homeLoading } = useQuery({
+        queryKey: ["home"],
+        queryFn: () => animeService.getHome(),
     });
 
-    const { data: seasonal, isLoading: seasonalLoading } = useQuery({
-        queryKey: ["seasonal"],
-        queryFn: () => animeService.getRecentAnime(),
-    });
-
-    const { data: actionAnime, isLoading: actionLoading } = useQuery({
-        queryKey: ["actionAnime"],
-        queryFn: () => animeService.getAnimeByGenre(1, 1, 12),
-    });
-
-    const { data: comedyAnime, isLoading: comedyLoading } = useQuery({
-        queryKey: ["comedyAnime"],
-        queryFn: () => animeService.getAnimeByGenre(4, 1, 12),
-    });
-
-    const heroAnime = trending?.data?.[0];
+    const home = homeData?.data;
+    const heroAnime = home?.spotlight?.[0];
 
     return (
         <>
@@ -43,7 +29,7 @@ export default function HomePage() {
                         <>
                             <div className="absolute inset-0">
                                 <Image
-                                    src={heroAnime.images.webp.large_image_url}
+                                    src={heroAnime.poster}
                                     alt={heroAnime.title}
                                     fill
                                     className="object-cover opacity-30 blur-[2px]"
@@ -79,7 +65,7 @@ export default function HomePage() {
                                     </p>
 
                                     <div className="flex flex-wrap items-center gap-4">
-                                        <Link href={`/anime/${heroAnime.mal_id}`}>
+                                        <Link href={`/anime/${heroAnime.id}`}>
                                             <Button size="lg" variant="outline" className="rounded-full border-white/10 bg-white/5 px-8 backdrop-blur-md hover:bg-white/10 hover:cursor-pointer">
                                                 <Info className="mr-2" size={20} /> Anime Details
                                             </Button>
@@ -94,39 +80,38 @@ export default function HomePage() {
                 {/* Content Sections */}
                 <div className="container mx-auto px-4 space-y-16 -mt-20 relative z-10 xl:px-20">
                     <AnimeCarousel
-                        title="Top Trending"
-                        description="The most popular series right now"
-                        data={trending?.data?.slice(0, 12)}
-                        isLoading={trendingLoading}
+                        title="Top Airing"
+                        description="The most popular airing series right now"
+                        data={home?.topAiring}
+                        isLoading={homeLoading}
                         icon={<TrendingUp size={20} className="text-primary" />}
                     />
 
                     <AnimeCarousel
-                        title="New This Season"
-                        description="Latest additions for Spring 2026"
-                        data={seasonal?.data?.slice(0, 12)}
-                        isLoading={seasonalLoading}
+                        title="Latest Episodes"
+                        description="Recently released episodes"
+                        data={home?.latestEpisode}
+                        isLoading={homeLoading}
                         icon={<Calendar size={20} className="text-primary" />}
                     />
 
                     <AnimeCarousel
-                        title="Adrenaline Rush"
-                        description="Best action-packed anime"
-                        data={actionAnime?.data}
-                        isLoading={actionLoading}
+                        title="Most Popular"
+                        description="All-time fan favorites"
+                        data={home?.mostPopular}
+                        isLoading={homeLoading}
                         icon={<Zap size={20} className="text-primary" />}
                     />
 
                     <AnimeCarousel
-                        title="Laugh Out Loud"
-                        description="Funniest comedy series"
-                        data={comedyAnime?.data}
-                        isLoading={comedyLoading}
+                        title="Most Favorite"
+                        description="Community top picks"
+                        data={home?.mostFavorite}
+                        isLoading={homeLoading}
                         icon={<Smile size={20} className="text-primary" />}
                     />
                 </div>
             </main>
-
         </>
     );
 }

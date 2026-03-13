@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
-import { animeService, AnimeSearchParams } from "@/lib/jikan";
+import { animeService, SearchParams } from "@/lib/api";
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { toast } from "react-hot-toast";
@@ -34,8 +34,7 @@ export function CatalogContent() {
     const filters = useMemo(() => ({
         status: getParam("status", ""),
         type: getParam("type", ""),
-        order_by: getParam("order_by", "popularity"),
-        sort: getParam("sort", "desc") as "asc" | "desc",
+        sort: getParam("sort", ""),
     }), [getParam]);
 
     const [localSearch, setLocalSearch] = useState(search);
@@ -49,7 +48,7 @@ export function CatalogContent() {
         const params = new URLSearchParams(searchParams.toString());
 
         Object.entries(newParams).forEach(([key, value]) => {
-            if (value === null || value === "" || (key === "page" && value === 1) || (key === "order_by" && value === "popularity") || (key === "sort" && value === "desc")) {
+            if (value === null || value === "" || (key === "page" && value === 1)) {
                 params.delete(key);
             } else {
                 params.set(key, value.toString());
@@ -72,27 +71,30 @@ export function CatalogContent() {
     }, [debouncedSearch, search, updateUrl]);
 
     // Data fetching
-    const fetchParams = useMemo((): AnimeSearchParams => ({
-        q: debouncedSearch || undefined,
+    const fetchParams = useMemo((): SearchParams => ({
+        keyword: debouncedSearch || undefined,
         page,
         status: filters.status || undefined,
         type: filters.type || undefined,
-        order_by: filters.order_by,
-        sort: filters.sort,
-        limit: 24, // Senior: Consistent page size
+        sort: filters.sort || undefined,
     }), [debouncedSearch, page, filters]);
 
     const { data: results, isLoading, isPlaceholderData } = useQuery({
         queryKey: ["catalog", fetchParams],
-        queryFn: () => animeService.searchAnime(fetchParams),
+        queryFn: () => {
+            if (fetchParams.keyword) {
+                return animeService.searchAnime(fetchParams);
+            }
+            return animeService.getFilteredAnime(fetchParams);
+        },
         placeholderData: keepPreviousData,
         staleTime: 1000 * 60 * 5, // 5 minutes cache
     });
 
     // Update pagination
     useEffect(() => {
-        if (results?.pagination?.last_visible_page && !isPlaceholderData) {
-            setTotalVisiblePages(results.pagination.last_visible_page);
+        if (results?.data?.pageInfo?.totalPages && !isPlaceholderData) {
+            setTotalVisiblePages(results.data.pageInfo.totalPages);
         }
     }, [results, isPlaceholderData]);
 
@@ -109,8 +111,7 @@ export function CatalogContent() {
     const hasActiveFilters = localSearch !== "" ||
         filters.status !== "" ||
         filters.type !== "" ||
-        filters.order_by !== "popularity" ||
-        filters.sort !== "desc";
+        (filters.sort !== "" && filters.sort !== "default");
 
     return (
         <div className="container mx-auto px-4 xl:px-20 min-h-[60vh]">
@@ -121,9 +122,7 @@ export function CatalogContent() {
                         Explore <span className="text-primary italic">Catalog</span>
                     </h1>
                     <p className="text-zinc-500 font-medium">
-                        {results?.pagination?.items?.total
-                            ? `Discovering ${results.pagination.items.total.toLocaleString()} anime masterpieces`
-                            : "Discover thousands of anime titles"}
+                        Discover thousands of anime titles
                     </p>
                 </div>
 
@@ -147,7 +146,7 @@ export function CatalogContent() {
 
             {/* Results Grid */}
             <AnimeResultsGrid
-                animeList={results?.data}
+                animeList={results?.data?.response}
                 isLoading={isLoading}
                 skeletonCount={24}
             />
@@ -159,7 +158,7 @@ export function CatalogContent() {
                         currentPage={page}
                         totalPages={totalVisiblePages}
                         onPageChange={(p) => updateUrl({ page: p })}
-                        hasNextPage={results?.pagination?.has_next_page || false}
+                        hasNextPage={results?.data?.pageInfo?.hasNextPage || false}
                         isLoading={isLoading}
                     />
                 </div>
