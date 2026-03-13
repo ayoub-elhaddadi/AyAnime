@@ -92,12 +92,12 @@ export const AnimeCarousel = ({ title, description, data, isLoading, icon }: Ani
                     Array.from({ length: 6 }).map((_, i) => (
                         <div
                             key={i}
-                            className="min-w-[160px] md:min-w-[200px] aspect-[3/4] animate-pulse rounded-xl bg-zinc-900/50 border border-white/5"
+                            className="w-[160px] md:w-[200px] flex-shrink-0 aspect-[3/4] animate-pulse rounded-xl bg-zinc-900/50 border border-white/5"
                         />
                     ))
                 ) : (
                     data?.map(anime => (
-                        <div key={anime.id} className="min-w-[160px] md:min-w-[200px]">
+                        <div key={anime.id} className="w-[160px] md:w-[200px] flex-shrink-0">
                             <AnimeCard
                                 id={anime.id}
                                 title={anime.title}

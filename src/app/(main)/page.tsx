@@ -6,7 +6,7 @@ import { AnimeCarousel } from "@/components/anime/AnimeCarousel";
 import { Navbar } from "@/components/shared/Navbar";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { Info, TrendingUp, Calendar, Zap, Smile } from "lucide-react";
+import { Info, TrendingUp, Sparkles, Star, CheckCircle2, Trophy, BarChart3, History, PlayCircle } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -24,7 +24,7 @@ export default function HomePage() {
             <Navbar />
             <main className="min-h-screen pb-20">
                 {/* Hero Section */}
-                <section className="relative h-[85vh] w-full overflow-hidden">
+                <section className="relative h-[85vh] xl:h-[100vh] w-full overflow-hidden">
                     {heroAnime && (
                         <>
                             <div className="absolute inset-0">
@@ -39,34 +39,39 @@ export default function HomePage() {
                                 <div className="absolute inset-0 bg-gradient-to-r from-background via-transparent to-transparent" />
                             </div>
 
-                            <div className="container relative mx-auto flex h-full flex-col justify-center px-4 pt-20 xl:px-20">
+                            <div className="container relative mx-auto flex h-full flex-col justify-center px-4 pt-24 xl:px-20">
                                 <motion.div
                                     initial={{ opacity: 0, x: -50 }}
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ duration: 0.6 }}
-                                    className="max-w-2xl"
+                                    className="max-w-3xl pb-20"
                                 >
                                     <div className="mb-4 flex items-center gap-3">
                                         <span className="rounded bg-primary/20 px-2 py-1 text-xs font-bold text-primary ring-1 ring-primary/30">
                                             #1 MOST POPULAR
                                         </span>
-                                        <div className="flex items-center gap-1 text-xs font-semibold text-yellow-400">
+                                        <div className="flex items-center gap-1 text-xs font-semibold text-yellow-400 font-mono tracking-tighter">
                                             <TrendingUp size={14} />
                                             <span>Trending Now</span>
                                         </div>
                                     </div>
 
-                                    <h1 className="mb-6 text-4xl font-black leading-tight text-white md:text-7xl">
+                                    <h1 className="mb-6 text-4xl font-black leading-[1.1] text-white md:text-7xl lg:text-8xl">
                                         {heroAnime.title}
                                     </h1>
 
-                                    <p className="mb-8 line-clamp-3 text-base text-zinc-300 md:text-lg">
+                                    <p className="mb-8 line-clamp-3 text-base text-zinc-300 md:text-lg max-w-xl">
                                         {heroAnime.synopsis}
                                     </p>
 
                                     <div className="flex flex-wrap items-center gap-4">
                                         <Link href={`/anime/${heroAnime.id}`}>
-                                            <Button size="lg" variant="outline" className="rounded-full border-white/10 bg-white/5 px-8 backdrop-blur-md hover:bg-white/10 hover:cursor-pointer">
+                                            <Button size="lg" className="rounded-full bg-primary px-8 hover:bg-primary/80 text-white font-bold group">
+                                                <PlayCircle className="mr-2 group-hover:scale-110 transition-transform" size={20} /> Watch Now
+                                            </Button>
+                                        </Link>
+                                        <Link href={`/anime/${heroAnime.id}`}>
+                                            <Button size="lg" variant="outline" className="rounded-full border-white/10 bg-white/5 px-8 backdrop-blur-md hover:bg-white/10 hover:cursor-pointer transition-colors">
                                                 <Info className="mr-2" size={20} /> Anime Details
                                             </Button>
                                         </Link>
@@ -78,37 +83,69 @@ export default function HomePage() {
                 </section>
 
                 {/* Content Sections */}
-                <div className="container mx-auto px-4 space-y-16 -mt-20 relative z-10 xl:px-20">
-                    <AnimeCarousel
-                        title="Top Airing"
-                        description="The most popular airing series right now"
-                        data={home?.topAiring}
-                        isLoading={homeLoading}
-                        icon={<TrendingUp size={20} className="text-primary" />}
-                    />
-
+                <div className="container mx-auto px-4 space-y-20 relative z-10 xl:px-20 py-12">
                     <AnimeCarousel
                         title="Latest Episodes"
-                        description="Recently released episodes"
+                        description="Catch the freshest releases just aired"
                         data={home?.latestEpisode}
                         isLoading={homeLoading}
-                        icon={<Calendar size={20} className="text-primary" />}
+                        icon={<PlayCircle size={24} className="text-primary" />}
+                    />
+
+                    {/* <AnimeCarousel
+                        title="Trending Anime"
+                        description="Rolling with the most popular series right now"
+                        data={home?.trending}
+                        isLoading={homeLoading}
+                        icon={<Flame size={24} className="text-orange-500 shadow-[0_0_15px_rgba(249,115,22,0.4)]" />}
+                    /> */}
+
+                    <AnimeCarousel
+                        title="New Added"
+                        description="Fresh additions to our growing collection"
+                        data={home?.newAdded}
+                        isLoading={homeLoading}
+                        icon={<Sparkles size={24} className="text-blue-400 shadow-[0_0_15px_rgba(96,165,250,0.4)]" />}
                     />
 
                     <AnimeCarousel
-                        title="Most Popular"
-                        description="All-time fan favorites"
-                        data={home?.mostPopular}
+                        title="Spotlight"
+                        description="Handpicked series you shouldn't miss"
+                        data={home?.spotlight}
                         isLoading={homeLoading}
-                        icon={<Zap size={20} className="text-primary" />}
+                        icon={<Star size={24} className="text-yellow-400 fill-yellow-400 shadow-[0_0_15px_rgba(250,204,21,0.4)]" />}
                     />
 
                     <AnimeCarousel
-                        title="Most Favorite"
-                        description="Community top picks"
-                        data={home?.mostFavorite}
+                        title="Completed Hits"
+                        description="Binge-ready: Series that just finished airing"
+                        data={home?.latestCompleted}
                         isLoading={homeLoading}
-                        icon={<Smile size={20} className="text-primary" />}
+                        icon={<CheckCircle2 size={24} className="text-green-500 shadow-[0_0_15px_rgba(34,197,94,0.4)]" />}
+                    />
+
+                    <AnimeCarousel
+                        title="Today's Top 10"
+                        description="The hottest picks from the last 24 hours"
+                        data={home?.topTen?.today}
+                        isLoading={homeLoading}
+                        icon={<Trophy size={24} className="text-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.4)]" />}
+                    />
+
+                    <AnimeCarousel
+                        title="Weekly Champions"
+                        description="Dominating the charts this entire week"
+                        data={home?.topTen?.week}
+                        isLoading={homeLoading}
+                        icon={<BarChart3 size={24} className="text-purple-500 shadow-[0_0_15px_rgba(168,85,247,0.4)]" />}
+                    />
+
+                    <AnimeCarousel
+                        title="Monthly Legends"
+                        description="The monthly champions of the anime world"
+                        data={home?.topTen?.month}
+                        isLoading={homeLoading}
+                        icon={<History size={24} className="text-rose-500 shadow-[0_0_15px_rgba(244,63,94,0.4)]" />}
                     />
                 </div>
             </main>
