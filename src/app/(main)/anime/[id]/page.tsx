@@ -8,17 +8,17 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { motion } from "framer-motion";
-import { Star, Heart, BookmarkPlus, Send, MessageSquare, StickyNote, User, BookmarkCheck, ThumbsUp, Reply, Trash2, X, Edit2, Search } from "lucide-react";
+import { Star, Heart, BookmarkPlus, Send, MessageSquare, StickyNote, User, BookmarkCheck, ThumbsUp, Reply, Trash2, X, Edit2 } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
 import { supabase } from "@/lib/supabase";
 import { useState, useEffect, useMemo, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { useCollections } from "@/lib/hooks/useCollections";
-import Link from "next/link";
 import { ShareMenu } from "@/components/shared/ShareMenu";
-import { Play, List } from "lucide-react";
+import { EpisodeList } from "@/components/anime/EpisodeList";
 
 interface Comment {
     id: string;
@@ -46,9 +46,6 @@ export default function AnimeDetailsPage() {
     const [commentContent, setCommentContent] = useState("");
     const [replyingTo, setReplyingTo] = useState<{ id: string, username: string } | null>(null);
     const [activeTab, setActiveTab] = useState("episodes");
-    const [searchQuery, setSearchQuery] = useState("");
-    const [visibleCount, setVisibleCount] = useState(30);
-    const observerTarget = useRef<HTMLDivElement>(null);
 
 
     // Fetch Anime Details
@@ -68,34 +65,6 @@ export default function AnimeDetailsPage() {
     });
 
     const episodes = useMemo(() => episodesResp?.data || [], [episodesResp?.data]);
-
-    const filteredEpisodes = useMemo(() => {
-        return episodes.filter(ep =>
-            ep.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            ep.episodeNumber.toString() === searchQuery
-        );
-    }, [episodes, searchQuery]);
-
-    const visibleEpisodes = useMemo(() => {
-        return filteredEpisodes.slice(0, visibleCount);
-    }, [filteredEpisodes, visibleCount]);
-
-    useEffect(() => {
-        const observer = new IntersectionObserver(
-            (entries) => {
-                if (entries[0].isIntersecting && visibleCount < filteredEpisodes.length) {
-                    setVisibleCount(prev => prev + 30);
-                }
-            },
-            { threshold: 0.1 }
-        );
-
-        if (observerTarget.current) {
-            observer.observe(observerTarget.current);
-        }
-
-        return () => observer.disconnect();
-    }, [filteredEpisodes.length, visibleCount]);
 
     const { isWatchlisted, isFavorited, toggleWatchlist, toggleFavorite, upsertAnime } = useCollections(animeId, anime);
 
@@ -264,10 +233,10 @@ export default function AnimeDetailsPage() {
                     alt={anime.title}
                     fill
                     sizes="100vw"
-                    className="object-cover opacity-20 blur-sm"
+                    className="object-cover opacity-20 blur-xs"
                     priority
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-background via-background/90 to-transparent" />
             </div>
 
             <div className="container mx-auto px-4 -mt-60 relative z-10 xl:px-20">
@@ -343,7 +312,7 @@ export default function AnimeDetailsPage() {
                     </div>
 
                     {/* Info & Tabs */}
-                    <div className="flex-1 pt-40 md:pt-60">
+                    <div className="flex-1 pt-40 md:pt-60 mt-4">
                         <motion.div
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
@@ -395,104 +364,14 @@ export default function AnimeDetailsPage() {
                                         </div>
                                     </div>
                                 </TabsContent>
-
                                 <TabsContent value="episodes" className="pt-6">
-                                    <div className="space-y-6">
-                                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                                            <div>
-                                                <h3 className="text-xl font-bold text-white flex items-center justify-center gap-3">
-                                                    <span className="flex items-center gap-2"><List size={20} className="text-primary" /> Episode List</span>
-                                                    <span className="px-2.5 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] uppercase font-bold tracking-widest">
-                                                        {episodes.length} Episodes
-                                                    </span>
-                                                </h3>
-                                            </div>
-
-                                            <div className="relative w-full md:w-80 group">
-                                                <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none text-zinc-500 group-focus-within:text-primary transition-colors">
-                                                    <Search size={18} />
-                                                </div>
-                                                <input
-                                                    type="text"
-                                                    placeholder="Search episode title or number..."
-                                                    value={searchQuery}
-                                                    onChange={(e) => {
-                                                        setSearchQuery(e.target.value);
-                                                        setVisibleCount(30);
-                                                    }}
-                                                    className="w-full bg-zinc-900 border border-white/5 rounded-xl py-2.5 pl-10 pr-4 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:ring-1 focus:ring-primary/50 transition-all"
-                                                />
-                                            </div>
-                                        </div>
-
-                                        {episodesLoading ? (
-                                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                                                {[...Array(9)].map((_, i) => (
-                                                    <div key={i} className="h-24 rounded-xl bg-white/5 animate-pulse" />
-                                                ))}
-                                            </div>
-                                        ) : filteredEpisodes.length > 0 ? (
-                                            <>
-                                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                                                    {visibleEpisodes.map((ep) => (
-                                                        <Link
-                                                            key={ep.id}
-                                                            href={`/watch/${ep.id}`}
-                                                            className="group relative flex items-center gap-4 rounded-xl bg-zinc-900/50 backdrop-blur-md border border-white/5 p-3 transition-all hover:border-primary/50 hover:bg-primary/5 hover:scale-[1.02] active:scale-[0.98] hover:cursor-pointer overflow-hidden shadow-lg"
-                                                        >
-                                                            <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-
-                                                            <div className="relative shrink-0 w-12 h-12 flex items-center justify-center rounded-lg bg-zinc-950 border border-white/5 group-hover:border-primary/30 transition-colors">
-                                                                <span className="text-lg font-black text-zinc-500 group-hover:text-primary transition-colors italic">
-                                                                    {ep.episodeNumber}
-                                                                </span>
-                                                            </div>
-
-                                                            <div className="relative flex-1 min-w-0">
-                                                                <h4 className="text-sm font-bold text-white truncate group-hover:text-primary transition-colors">
-                                                                    {ep.title || `Episode ${ep.episodeNumber}`}
-                                                                </h4>
-                                                                <div className="flex items-center gap-2 mt-1">
-                                                                    <span className="text-[10px] uppercase font-bold tracking-widest text-zinc-600 group-hover:text-zinc-500">
-                                                                        Stream Now
-                                                                    </span>
-                                                                    {ep.isFiller && (
-                                                                        <span className="px-1.5 py-0.5 rounded text-[8px] font-bold uppercase bg-yellow-500/10 text-yellow-500 border border-yellow-500/20">
-                                                                            Filler
-                                                                        </span>
-                                                                    )}
-                                                                </div>
-                                                            </div>
-
-                                                            <div className="relative shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                                <Play size={16} className="text-primary" />
-                                                            </div>
-                                                        </Link>
-                                                    ))}
-                                                </div>
-
-                                                {/* Infinite Scroll Trigger */}
-                                                <div ref={observerTarget} className="h-10 w-full flex items-center justify-center">
-                                                    {visibleCount < filteredEpisodes.length && (
-                                                        <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-                                                    )}
-                                                </div>
-                                            </>
-                                        ) : (
-                                            <div className="text-center py-20 border border-dashed border-white/10 rounded-2xl bg-white/5">
-                                                <Search size={40} className="text-zinc-800 mx-auto mb-4" />
-                                                <p className="text-zinc-500 font-medium">No episodes match your search.</p>
-                                                <Button
-                                                    variant="ghost"
-                                                    className="mt-2 text-primary hover:bg-primary/5"
-                                                    onClick={() => setSearchQuery("")}
-                                                >
-                                                    Clear Search
-                                                </Button>
-                                            </div>
-                                        )}
-                                    </div>
+                                    <EpisodeList
+                                        episodes={episodes}
+                                        isLoading={episodesLoading}
+                                        animeId={animeId}
+                                    />
                                 </TabsContent>
+
 
                                 <TabsContent value="discussions" className="pt-6">
                                     <div className="space-y-8">
