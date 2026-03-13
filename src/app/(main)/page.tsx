@@ -6,7 +6,7 @@ import { AnimeCarousel } from "@/components/anime/AnimeCarousel";
 import { Navbar } from "@/components/shared/Navbar";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { Info, TrendingUp, Sparkles, Star, CheckCircle2, Trophy, BarChart3, History, PlayCircle } from "lucide-react";
+import { Info, TrendingUp, Sparkles, Star, Trophy, BarChart3, History, PlayCircle } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 

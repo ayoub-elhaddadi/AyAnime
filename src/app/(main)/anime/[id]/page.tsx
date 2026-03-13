@@ -18,9 +18,7 @@ import { cn } from "@/lib/utils";
 import { useCollections } from "@/lib/hooks/useCollections";
 import Link from "next/link";
 import { ShareMenu } from "@/components/shared/ShareMenu";
-import { Play, Calendar, Info, List } from "lucide-react";
-import type { Episode } from "@/types/Anime";
-
+import { Play, List } from "lucide-react";
 
 interface Comment {
     id: string;
@@ -69,7 +67,7 @@ export default function AnimeDetailsPage() {
         enabled: !!animeId,
     });
 
-    const episodes = episodesResp?.data || [];
+    const episodes = useMemo(() => episodesResp?.data || [], [episodesResp?.data]);
 
     const filteredEpisodes = useMemo(() => {
         return episodes.filter(ep =>
@@ -400,12 +398,12 @@ export default function AnimeDetailsPage() {
                                     <div className="space-y-6">
                                         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                                             <div>
-                                                <h3 className="text-xl font-bold text-white flex items-center gap-2">
-                                                    <List size={20} className="text-primary" /> Episode List
+                                                <h3 className="text-xl font-bold text-white flex items-center justify-center gap-3">
+                                                    <span className="flex items-center gap-2"><List size={20} className="text-primary" /> Episode List</span>
+                                                    <span className="px-2.5 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] uppercase font-bold tracking-widest">
+                                                        {episodes.length} Episodes
+                                                    </span>
                                                 </h3>
-                                                <p className="text-xs text-zinc-500 mt-1 font-medium">
-                                                    Showing {visibleEpisodes.length} of {filteredEpisodes.length} episodes
-                                                </p>
                                             </div>
 
                                             <div className="relative w-full md:w-80 group">
