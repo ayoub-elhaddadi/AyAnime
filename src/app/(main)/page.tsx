@@ -32,6 +32,7 @@ export default function HomePage() {
                                     src={heroAnime.poster}
                                     alt={heroAnime.title}
                                     fill
+                                    sizes="100vw"
                                     className="object-cover opacity-30 blur-[2px]"
                                     priority
                                 />

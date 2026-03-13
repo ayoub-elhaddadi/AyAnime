@@ -180,6 +180,7 @@ export const Navbar = () => {
                                                             src={anime.poster}
                                                             alt={anime.title}
                                                             fill
+                                                            sizes="48px"
                                                             className="object-cover transition-transform group-hover:scale-110"
                                                         />
                                                     </div>

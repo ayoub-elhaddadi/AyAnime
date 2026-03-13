@@ -263,6 +263,7 @@ export default function AnimeDetailsPage() {
                     src={anime.poster}
                     alt={anime.title}
                     fill
+                    sizes="100vw"
                     className="object-cover opacity-20 blur-sm"
                     priority
                 />
@@ -283,6 +284,7 @@ export default function AnimeDetailsPage() {
                                 src={anime.poster}
                                 alt={anime.title}
                                 fill
+                                sizes="(max-width: 768px) 100vw, 288px"
                                 className="object-cover"
                             />
                         </motion.div>
@@ -521,7 +523,7 @@ export default function AnimeDetailsPage() {
                                             <div className="flex gap-4 items-start flex-col sm:flex-row">
                                                 <div className="hidden sm:flex h-10 w-10 shrink-0 rounded-full bg-zinc-800 items-center justify-center border border-white/5 relative overflow-hidden">
                                                     {profile?.avatar_url ? (
-                                                        <Image src={profile.avatar_url} alt={profile.username || ""} fill className="object-cover" />
+                                                        <Image src={profile.avatar_url} alt={profile.username || ""} fill sizes="40px" className="object-cover" />
                                                     ) : (
                                                         <User size={20} className="text-zinc-500" />
                                                     )}
@@ -678,7 +680,7 @@ const CommentThread = ({ comment, user, onReply, onToggleLike, onEdit, onDelete,
         <div className="flex gap-4 animate-in fade-in slide-in-from-top-4 relative">
             <div className="relative h-10 w-10 shrink-0 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20 overflow-hidden z-20">
                 {comment.profiles.avatar_url ? (
-                    <Image src={comment.profiles.avatar_url} alt={comment.profiles.username || ""} fill className="object-cover" />
+                    <Image src={comment.profiles.avatar_url} alt={comment.profiles.username || ""} fill sizes="40px" className="object-cover" />
                 ) : (
                     <span className="text-primary font-bold text-xs">{(comment.profiles.username || "U")[0].toUpperCase()}</span>
                 )}

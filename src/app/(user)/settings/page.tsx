@@ -240,7 +240,7 @@ export default function SettingsPage() {
                             <div className="relative mx-auto h-32 w-32 md:h-40 md:w-40 rounded-full bg-primary/20 p-1 ring-4 ring-primary/30 group">
                                 <div className="h-full w-full rounded-full overflow-hidden bg-zinc-800 flex items-center justify-center relative">
                                     {avatarPreview ? (
-                                        <Image src={avatarPreview} alt="Preview" fill className="object-cover" />
+                                        <Image src={avatarPreview} alt="Preview" fill sizes="160px" className="object-cover" />
                                     ) : (
                                         <User size={64} className="text-zinc-600" />
                                     )}

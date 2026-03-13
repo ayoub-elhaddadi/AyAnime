@@ -51,6 +51,7 @@ export const WatchlistCard = ({ item }: WatchlistCardProps) => {
                             src={anime.poster || "/placeholder.png"}
                             alt={anime.title}
                             fill
+                            sizes="64px"
                             className="object-cover"
                         />
                     </div>
