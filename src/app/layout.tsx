@@ -10,6 +10,9 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "AyAnime | Premium Anime Catalog",
   description: "Browse, track and discuss your favorite anime on AyAnime.",
+  icons: {
+    icon: "/favicon.ico",
+  },
 };
 
 import Providers from "@/components/shared/Providers";
