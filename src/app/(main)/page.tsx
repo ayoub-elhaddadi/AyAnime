@@ -6,11 +6,9 @@ import { AnimeCarousel } from "@/components/anime/AnimeCarousel";
 import { Navbar } from "@/components/shared/Navbar";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { Play, Info, TrendingUp, Calendar, Zap, Smile } from "lucide-react";
+import { Info, TrendingUp, Calendar, Zap, Smile } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
-import { TrailerModal } from "@/components/shared/TrailerModal";
 
 export default function HomePage() {
     const { data: trending, isLoading: trendingLoading } = useQuery({
@@ -34,7 +32,6 @@ export default function HomePage() {
     });
 
     const heroAnime = trending?.data?.[0];
-    const [heroTrailerOpen, setHeroTrailerOpen] = useState(false);
 
     return (
         <>
@@ -82,15 +79,6 @@ export default function HomePage() {
                                     </p>
 
                                     <div className="flex flex-wrap items-center gap-4">
-                                        {heroAnime.trailer?.embed_url && (
-                                            <Button
-                                                size="lg"
-                                                className="rounded-full px-8 shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:cursor-pointer"
-                                                onClick={() => setHeroTrailerOpen(true)}
-                                            >
-                                                <Play className="mr-2 fill-white" size={20} /> Watch Trailer
-                                            </Button>
-                                        )}
                                         <Link href={`/anime/${heroAnime.mal_id}`}>
                                             <Button size="lg" variant="outline" className="rounded-full border-white/10 bg-white/5 px-8 backdrop-blur-md hover:bg-white/10 hover:cursor-pointer">
                                                 <Info className="mr-2" size={20} /> Anime Details
@@ -139,15 +127,6 @@ export default function HomePage() {
                 </div>
             </main>
 
-            {/* Hero Trailer Modal */}
-            {heroAnime?.trailer?.embed_url && (
-                <TrailerModal
-                    isOpen={heroTrailerOpen}
-                    onClose={() => setHeroTrailerOpen(false)}
-                    embedUrl={heroAnime.trailer.embed_url}
-                    title={heroAnime.title}
-                />
-            )}
         </>
     );
 }

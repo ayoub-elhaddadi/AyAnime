@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { motion } from "framer-motion";
-import { Star, Heart, BookmarkPlus, Send, MessageSquare, StickyNote, User, BookmarkCheck, ThumbsUp, Reply, Trash2, X, Edit2, PlayCircle } from "lucide-react";
+import { Star, Heart, BookmarkPlus, Send, MessageSquare, StickyNote, User, BookmarkCheck, ThumbsUp, Reply, Trash2, X, Edit2 } from "lucide-react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -18,7 +18,7 @@ import { cn } from "@/lib/utils";
 import { useCollections } from "@/lib/hooks/useCollections";
 import Link from "next/link";
 import { ShareMenu } from "@/components/shared/ShareMenu";
-import { TrailerModal } from "@/components/shared/TrailerModal";
+
 
 interface Comment {
     id: string;
@@ -46,7 +46,7 @@ export default function AnimeDetailsPage() {
     const [commentContent, setCommentContent] = useState("");
     const [replyingTo, setReplyingTo] = useState<{ id: string, username: string } | null>(null);
     const [activeTab, setActiveTab] = useState("overview");
-    const [isTrailerOpen, setIsTrailerOpen] = useState(false);
+
 
     // Fetch Anime Details
     const { data: animeResp, isLoading: animeLoading } = useQuery({
@@ -274,26 +274,7 @@ export default function AnimeDetailsPage() {
                             </div>
                         </div>
 
-                        {/* Watch Trailer Button */}
-                        {anime.trailer?.embed_url && (
-                            <Button
-                                variant="outline"
-                                className="w-full h-10 gap-2 bg-white/5 border-white/10 hover:bg-white/10 hover:cursor-pointer text-white mt-3"
-                                onClick={() => setIsTrailerOpen(true)}
-                            >
-                                <PlayCircle size={18} className="text-red-500" /> Watch Trailer
-                            </Button>
-                        )}
 
-                        {/* Trailer Modal */}
-                        {anime.trailer?.embed_url && (
-                            <TrailerModal
-                                isOpen={isTrailerOpen}
-                                onClose={() => setIsTrailerOpen(false)}
-                                embedUrl={anime.trailer.embed_url}
-                                title={anime.title}
-                            />
-                        )}
 
 
                         <div className="mt-8 rounded-xl bg-zinc-900/50 border border-white/5 p-4 space-y-4">
