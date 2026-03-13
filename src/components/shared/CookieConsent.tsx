@@ -83,7 +83,7 @@ export function CookieConsent() {
 
                             <button
                                 onClick={() => setIsVisible(false)}
-                                className="absolute right-4 top-4 text-zinc-500 transition-colors hover:text-white"
+                                className="absolute right-4 top-4 text-zinc-500 transition-colors hover:text-white hover:cursor-pointer"
                                 aria-label="Close"
                             >
                                 <X size={20} />

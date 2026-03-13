@@ -66,7 +66,7 @@ export default function HomePage() {
 
                                     <div className="flex flex-wrap items-center gap-4">
                                         <Link href={`/anime/${heroAnime.id}`}>
-                                            <Button size="lg" className="rounded-full bg-primary px-8 hover:bg-primary/80 text-white font-bold group">
+                                            <Button size="lg" className="rounded-full bg-primary px-8 hover:bg-primary/80 text-white font-bold group hover:cursor-pointer">
                                                 <PlayCircle className="mr-2 group-hover:scale-110 transition-transform" size={20} /> Watch Now
                                             </Button>
                                         </Link>

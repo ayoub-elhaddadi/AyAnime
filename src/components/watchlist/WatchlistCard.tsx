@@ -82,7 +82,7 @@ export const WatchlistCard = ({ item }: WatchlistCardProps) => {
 
                             <div className="flex items-center gap-2">
                                 <select
-                                    className="bg-zinc-800 text-white text-sm font-bold rounded-lg px-3 py-2 outline-none border border-white/5 cursor-pointer hover:border-primary/50 transition-colors h-9 md:h-8"
+                                    className="bg-zinc-800 text-white text-sm font-bold rounded-lg px-3 py-1 outline-none border border-white/5 cursor-pointer hover:border-primary/50 transition-colors h-9 md:h-8"
                                     value={item.episode_progress || 0}
                                     onChange={(e) => updateWatchlistProgress.mutate(parseInt(e.target.value))}
                                     disabled={updateWatchlistProgress.isPending}
@@ -119,7 +119,7 @@ export const WatchlistCard = ({ item }: WatchlistCardProps) => {
                             <Button
                                 size="sm"
                                 variant="ghost"
-                                className="h-9 md:h-7 text-[10px] font-black text-green-500 hover:bg-green-500/10 uppercase tracking-wider px-4 md:px-3"
+                                className="h-9 md:h-7 text-[10px] font-black text-green-500 hover:bg-green-500/10 uppercase tracking-wider px-4 md:px-3 hover:cursor-pointer"
                                 onClick={() => updateWatchlistStatus.mutate('completed')}
                             >
                                 Finish
@@ -129,7 +129,7 @@ export const WatchlistCard = ({ item }: WatchlistCardProps) => {
                             size="icon"
                             variant="default"
                             title="View Anime details"
-                            className="h-9 w-9 md:h-7 md:w-7 rounded-full bg-primary/20 text-primary hover:bg-primary shadow-lg shadow-black/20"
+                            className="h-9 w-9 md:h-7 md:w-7 rounded-full bg-primary/20 text-primary hover:bg-primary shadow-lg shadow-black/20 hover:cursor-pointer"
                             asChild
                         >
                             <Link href={`/anime/${item.anime_id}`}>

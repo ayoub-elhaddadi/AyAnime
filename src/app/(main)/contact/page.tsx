@@ -63,7 +63,7 @@ export default function ContactPage() {
                                     <Textarea placeholder="Tell us how we can help..." className="min-h-[200px]" />
                                 </div>
 
-                                <button className="w-full flex items-center justify-center gap-2 rounded-2xl bg-primary py-4 font-bold text-white shadow-[0_0_20px_rgba(168,85,247,0.4)] transition-all hover:scale-[1.02] active:scale-[0.98]">
+                                <button className="w-full flex items-center justify-center gap-2 rounded-2xl bg-primary py-4 font-bold text-white shadow-[0_0_20px_rgba(168,85,247,0.4)] transition-all hover:scale-[1.02] active:scale-[0.98] hover:cursor-pointer">
                                     <Send size={18} />
                                     Dispatch Message
                                 </button>

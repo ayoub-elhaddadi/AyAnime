@@ -157,10 +157,10 @@ export default function AdminDashboard() {
                                         </td>
                                         <td className="px-6 py-4 text-right">
                                             <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                <Button size="icon" variant="outline" className="h-8 w-8 text-green-500 border-green-500/20 hover:bg-green-500/10" onClick={() => resolveReport.mutate({ id: report.id, status: "resolved" })}>
+                                                <Button size="icon" variant="outline" className="h-8 w-8 text-green-500 border-green-500/20 hover:bg-green-500/10 hover:cursor-pointer" onClick={() => resolveReport.mutate({ id: report.id, status: "resolved" })}>
                                                     <CheckCircle size={14} />
                                                 </Button>
-                                                <Button size="icon" variant="outline" className="h-8 w-8 text-red-500 border-red-500/20 hover:bg-red-500/10" onClick={() => deleteComment.mutate(report.comment_id)}>
+                                                <Button size="icon" variant="outline" className="h-8 w-8 text-red-500 border-red-500/20 hover:bg-red-500/10 hover:cursor-pointer" onClick={() => deleteComment.mutate(report.comment_id)}>
                                                     <XCircle size={14} />
                                                 </Button>
                                             </div>

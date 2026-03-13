@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Menu, X, User, LogOut, Shield, Heart, Bookmark, LayoutGrid, LogIn, UserPlus, User2Icon, UserCircle2Icon } from "lucide-react";
+import { Search, Menu, X, User, LogOut, Shield, Heart, Bookmark, LayoutGrid, LogIn, UserCircle2Icon } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -126,7 +126,7 @@ export const Navbar = () => {
 
                     {/* Mobile Menu Toggle */}
                     <button
-                        className="lg:hidden p-2 text-zinc-300 transition-colors hover:text-white"
+                        className="lg:hidden p-2 text-zinc-300 transition-colors hover:text-white hover:cursor-pointer"
                         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                     >
                         {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}

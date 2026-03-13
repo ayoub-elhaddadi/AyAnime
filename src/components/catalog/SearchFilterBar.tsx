@@ -33,7 +33,7 @@ export function SearchFilterBar({
                 {search && (
                     <button
                         onClick={() => onSearchChange("")}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition-colors p-1"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition-colors p-1 hover:cursor-pointer"
                     >
                         <X size={14} />
                     </button>
@@ -42,7 +42,7 @@ export function SearchFilterBar({
             <Button
                 variant="outline"
                 className={cn(
-                    "h-11 border-white/5 bg-zinc-900 gap-2 cursor-pointer transition-all rounded-xl px-4",
+                    "h-11 border-white/5 bg-zinc-900 gap-2 hover:cursor-pointer transition-all rounded-xl px-4",
                     showFilters && "text-primary border-primary/20 bg-primary/5",
                     hasActiveFilters && !showFilters && "border-primary/40 ring-1 ring-primary/20"
                 )}

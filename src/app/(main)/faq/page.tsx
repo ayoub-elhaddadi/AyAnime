@@ -121,7 +121,7 @@ export default function FAQPage() {
                         <p className="mb-8 text-zinc-400">Our support team is available 24/7 to help you with any issues.</p>
                         <a
                             href="/contact"
-                            className="inline-flex items-center justify-center rounded-xl bg-primary px-8 py-4 font-bold text-white shadow-[0_0_20px_rgba(168,85,247,0.4)] transition-all hover:scale-105 active:scale-95"
+                            className="inline-flex items-center justify-center rounded-xl bg-primary px-8 py-4 font-bold text-white shadow-[0_0_20px_rgba(168,85,247,0.4)] transition-all hover:scale-105 active:scale-95 hover:cursor-pointer"
                         >
                             Contact Support
                         </a>
@@ -139,7 +139,7 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
         <div className="rounded-2xl bg-white/5 border border-white/10 transition-all hover:border-white/20">
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="flex w-full items-center justify-between p-6 text-left"
+                className="flex w-full items-center justify-between p-6 text-left hover:cursor-pointer"
             >
                 <span className="text-lg font-bold text-white tracking-tight">{question}</span>
                 <ChevronDown
