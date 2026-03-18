@@ -1,14 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { X, Youtube, Instagram, Github, Heart } from "lucide-react";
 
 export const Footer = () => {
-    const pathname = usePathname();
     const currentYear = new Date().getFullYear();
 
-    if (pathname === "/maintenance") return null;
 
     const footerLinks = {
         explore: [

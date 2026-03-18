@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { useAuthStore } from "@/store/useAuthStore";
 import { AnimeCard } from "@/components/anime/AnimeCard";
-import { Navbar } from "@/components/shared/Navbar";
+
 import { Button } from "@/components/ui/button";
 import { Heart, Sparkles } from "lucide-react";
 import Link from "next/link";
@@ -28,7 +28,6 @@ export default function FavoritesPage() {
     if (!user) {
         return (
             <div className="flex min-h-screen flex-col items-center justify-center p-4">
-                <Navbar />
                 <Heart size={64} className="text-zinc-700 mb-4" />
                 <h2 className="text-2xl font-bold text-white mb-2">My Favorites</h2>
                 <p className="text-zinc-500 mb-6">Keep track of your most loved anime</p>
@@ -41,7 +40,6 @@ export default function FavoritesPage() {
 
     return (
         <main className="min-h-screen pb-20 pt-24">
-            <Navbar />
 
             <div className="container mx-auto px-4 xl:px-20">
                 <div className="mb-10">

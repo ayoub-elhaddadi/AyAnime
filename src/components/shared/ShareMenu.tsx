@@ -34,7 +34,7 @@ export const ShareMenu = ({ title, url, className }: ShareMenuProps) => {
             try {
                 await navigator.share({
                     title: title,
-                    text: `Check out ${title} on AniVerse!`,
+                    text: `Check out ${title} on AyAnime!`,
                     url: shareUrl,
                 });
                 toast.success("Shared successfully!");
@@ -63,7 +63,7 @@ export const ShareMenu = ({ title, url, className }: ShareMenuProps) => {
             name: "X (Twitter)",
             icon: <Twitter size={16} />,
             color: "hover:bg-[#1DA1F2]/10 hover:text-[#1DA1F2]",
-            href: `https://twitter.com/intent/tweet?text=${encodeURIComponent(`Check out ${title} on AniVerse! ${shareUrl}`)}`,
+            href: `https://twitter.com/intent/tweet?text=${encodeURIComponent(`Check out ${title} on AyAnime! ${shareUrl}`)}`,
         },
         {
             name: "Facebook",
@@ -75,7 +75,7 @@ export const ShareMenu = ({ title, url, className }: ShareMenuProps) => {
             name: "WhatsApp",
             icon: <MessageCircle size={16} />,
             color: "hover:bg-[#25D366]/10 hover:text-[#25D366]",
-            href: `https://wa.me/?text=${encodeURIComponent(`Check out ${title} on AniVerse! ${shareUrl}`)}`,
+            href: `https://wa.me/?text=${encodeURIComponent(`Check out ${title} on AyAnime! ${shareUrl}`)}`,
         },
         {
             name: "Reddit",

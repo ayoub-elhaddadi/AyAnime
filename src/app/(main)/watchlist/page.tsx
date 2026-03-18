@@ -3,7 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { useAuthStore } from "@/store/useAuthStore";
-import { Navbar } from "@/components/shared/Navbar";
+
 import { Button } from "@/components/ui/button";
 import { Bookmark } from "lucide-react";
 import Link from "next/link";
@@ -29,7 +29,6 @@ export default function WatchlistPage() {
     if (!user) {
         return (
             <div className="flex min-h-screen flex-col items-center justify-center p-4">
-                <Navbar />
                 <div className="text-center">
                     <div className="mx-auto w-20 h-20 rounded-full bg-zinc-900 flex items-center justify-center mb-6">
                         <Bookmark size={40} className="text-zinc-700" />
@@ -46,7 +45,7 @@ export default function WatchlistPage() {
 
     return (
         <main className="min-h-screen pb-20 pt-24 bg-zinc-950 font-sans">
-            <Navbar />
+
 
             <div className="container mx-auto px-4 xl:px-20">
                 <div className="mb-10 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">

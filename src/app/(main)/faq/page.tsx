@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, Search, HelpCircle, MessageSquare, Shield, Zap } from "lucide-react";
-import { Navbar } from "@/components/shared/Navbar";
 
 export default function FAQPage() {
     const [searchQuery, setSearchQuery] = useState("");
@@ -71,7 +70,6 @@ export default function FAQPage() {
 
     return (
         <>
-            <Navbar />
             <main className="container mt-30 mx-auto max-w-4xl px-4 py-20">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}

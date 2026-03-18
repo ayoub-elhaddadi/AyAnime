@@ -1,126 +1,126 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Mail, MessageSquare, X, MessageCircle, Send, MapPin, Clock } from "lucide-react";
+import { Mail, MessageCircle, X, Send, Clock } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Navbar } from "@/components/shared/Navbar";
 
 export default function ContactPage() {
     return (
         <>
-            <Navbar />
-            <main className="container mt-30 mx-auto max-w-4xl px-4 py-20">
+            <main className="container mt-30 mx-auto max-w-5xl px-4 py-20 relative overflow-hidden">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
-                    className="space-y-16"
+                    className="relative z-10 space-y-16"
                 >
                     {/* Header Section */}
-                    <div className="text-center space-y-4">
-                        <h1 className="text-4xl font-black tracking-tight text-white sm:text-6xl uppercase italic">
-                            How can we help?
-                        </h1>
-                        <p className="max-w-xl mx-auto text-lg text-zinc-400">
-                            Get in touch with our support crew or browse common topics below. We&apos;re here to ensure your journey through the Verse is seamless.
+                    <div className="text-center space-y-6">
+                        <motion.div
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            transition={{ delay: 0.2 }}
+                        >
+                            <h1 className="text-5xl font-black tracking-tighter text-white sm:text-7xl uppercase italic bg-gradient-to-r from-white via-white/80 to-zinc-500 bg-clip-text text-transparent">
+                                How can we help?
+                            </h1>
+                        </motion.div>
+                        <p className="max-w-2xl mx-auto text-lg text-zinc-400 leading-relaxed">
+                            Need assistance with your account or found a glitch in the Matrix? Our crew is standing by to help you navigate the Verse.
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
-                        {/* Contact Form */}
-                        <div className="lg:col-span-2 space-y-8 rounded-3xl bg-zinc-900/50 border border-white/5 p-8 sm:p-12">
-                            <div className="space-y-2">
-                                <h2 className="text-2xl font-bold text-white tracking-tight">Send us a message</h2>
-                                <p className="text-sm text-zinc-500">Response time: Typically within 24 hours.</p>
+                    <div className="max-w-3xl mx-auto space-y-12">
+                        {/* Contact Form with Glassmorphism */}
+                        <div className="relative group">
+                            <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/50 to-blue-500/50 rounded-[2.5rem] blur opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
+                            <div className="relative space-y-8 rounded-[2rem] bg-zinc-900/40 backdrop-blur-2xl border border-white/10 p-8 sm:p-12 shadow-2xl">
+                                <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+                                    <div className="space-y-2">
+                                        <h2 className="text-3xl font-bold text-white tracking-tight">Send us a message</h2>
+                                        <div className="flex items-center gap-2 text-zinc-500">
+                                            <Clock size={14} className="text-primary" />
+                                            <p className="text-sm">Response time: Typically within 24 hours.</p>
+                                        </div>
+                                    </div>
+                                    <span className="hidden sm:block h-px flex-1 bg-white/5 mb-2 mx-4" />
+                                </div>
+
+                                <form className="space-y-8" onSubmit={(e) => e.preventDefault()}>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                                        <div className="space-y-3">
+                                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 ml-1">Your Name</label>
+                                            <Input placeholder="E.g. Tanjiro Kamado" className="h-14 bg-black/40 border-white/5 rounded-2xl focus:border-primary/50 focus:ring-primary/20 transition-all text-base" />
+                                        </div>
+                                        <div className="space-y-3">
+                                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 ml-1">Email Address</label>
+                                            <Input placeholder="your@email.com" type="email" className="h-14 bg-black/40 border-white/5 rounded-2xl focus:border-primary/50 focus:ring-primary/20 transition-all text-base" />
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-3">
+                                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 ml-1">Topic</label>
+                                        <div className="relative">
+                                            <select className="appearance-none w-full h-14 rounded-2xl bg-black/40 border border-white/5 px-4 text-white focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/10 transition-all hover:bg-black/60 cursor-pointer">
+                                                <option>Account Issue</option>
+                                                <option>Streaming / Technical Problem</option>
+                                                <option>Bugs / Feature Request</option>
+                                                <option>Privacy / Legal</option>
+                                                <option>Other</option>
+                                            </select>
+                                            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-500">
+                                                <Send size={14} className="rotate-90" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-3">
+                                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 ml-1">Message</label>
+                                        <Textarea placeholder="Tell us how we can help..." className="min-h-[180px] bg-black/40 border-white/5 rounded-2xl focus:border-primary/50 focus:ring-primary/20 transition-all resize-none text-base p-4" />
+                                    </div>
+
+                                    <button className="group relative w-full overflow-hidden rounded-[1.25rem] bg-primary px-8 py-5 font-black uppercase tracking-widest text-white transition-all hover:scale-[1.01] active:scale-[0.99] hover:shadow-[0_0_30px_rgba(168,85,247,0.4)]">
+                                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                                        <div className="flex items-center justify-center gap-3 relative z-10">
+                                            <Send size={18} className="transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
+                                            <span>Dispatch Message</span>
+                                        </div>
+                                    </button>
+                                </form>
                             </div>
-
-                            <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                                    <div className="space-y-2">
-                                        <label className="text-xs font-black uppercase tracking-widest text-zinc-500 ml-1">Your Name</label>
-                                        <Input placeholder="E.g. Tanjiro Kamado" />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-xs font-black uppercase tracking-widest text-zinc-500 ml-1">Email Address</label>
-                                        <Input placeholder="your@email.com" type="email" />
-                                    </div>
-                                </div>
-
-                                <div className="space-y-2">
-                                    <label className="text-xs font-black uppercase tracking-widest text-zinc-500 ml-1">Topic</label>
-                                    <select className="w-full rounded-2xl bg-black border border-white/10 px-4 py-4 text-white focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/50 transition-all">
-                                        <option>Account Issue</option>
-                                        <option>Streaming / Technical Problem</option>
-                                        <option>Bugs / Feature Request</option>
-                                        <option>Privacy / Legal</option>
-                                        <option>Other</option>
-                                    </select>
-                                </div>
-
-                                <div className="space-y-2">
-                                    <label className="text-xs font-black uppercase tracking-widest text-zinc-500 ml-1">Message</label>
-                                    <Textarea placeholder="Tell us how we can help..." className="min-h-[200px]" />
-                                </div>
-
-                                <button className="w-full flex items-center justify-center gap-2 rounded-2xl bg-primary py-4 font-bold text-white shadow-[0_0_20px_rgba(168,85,247,0.4)] transition-all hover:scale-[1.02] active:scale-[0.98] hover:cursor-pointer">
-                                    <Send size={18} />
-                                    Dispatch Message
-                                </button>
-                            </form>
                         </div>
 
-                        {/* Support Sidebar */}
-                        <div className="space-y-8">
-                            {/* Quick Connection */}
-                            <div className="space-y-6 rounded-3xl bg-white/5 border border-white/10 p-8">
-                                <h3 className="text-xl font-bold text-white tracking-tight">Connect With Us</h3>
-                                <div className="space-y-4">
-                                    <LinkCard icon={MessageCircle} title="Live Chat" detail="Instant assistance" color="bg-green-500" />
-                                    <LinkCard icon={X} title="X" detail="@AyAnimeSupport" color="bg-blue-400" />
-                                    <LinkCard icon={MessageSquare} title="Discord" detail="Join the community" color="bg-indigo-500" />
-                                    <LinkCard icon={Mail} title="Email" detail="support@ayanime.com" color="bg-primary" />
-                                </div>
-                            </div>
-
-                            {/* Office Info */}
-                            <div className="space-y-6 rounded-3xl bg-zinc-950 border border-white/5 p-8">
-                                <h3 className="text-xl font-bold text-white tracking-tight">Main Hub</h3>
-                                <div className="space-y-4">
-                                    <div className="flex items-start gap-4">
-                                        <MapPin className="text-primary mt-1 shrink-0" size={18} />
+                        {/* Quick Connection Cards */}
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                            {[
+                                { icon: Mail, label: "Email", info: "support@ayanime.com", color: "from-blue-500/20 to-cyan-500/20", borderColor: "hover:border-blue-500/50" },
+                                { icon: MessageCircle, label: "Discord", info: "Join the Crew", color: "from-indigo-500/20 to-purple-500/20", borderColor: "hover:border-indigo-500/50" },
+                                { icon: X, label: "Socials", info: "@AyAnime_HQ", color: "from-zinc-500/20 to-zinc-800/20", borderColor: "hover:border-white/30" }
+                            ].map((card, i) => (
+                                <motion.div
+                                    key={i}
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.4 + (i * 0.1) }}
+                                    className={`group relative p-6 rounded-2xl bg-zinc-900/30 border border-white/5 transition-all cursor-pointer ${card.borderColor}`}
+                                >
+                                    <div className={`absolute inset-0 bg-gradient-to-br ${card.color} opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl`} />
+                                    <div className="relative z-10 flex flex-col items-center text-center space-y-3">
+                                        <div className="p-3 rounded-xl bg-white/5 group-hover:bg-white/10 transition-colors">
+                                            <card.icon size={22} className="text-white" />
+                                        </div>
                                         <div>
-                                            <p className="text-sm font-bold text-white">Shibuya, Tokyo</p>
-                                            <p className="text-xs text-zinc-500">Multiverse Sector 7, Neo Japan</p>
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-zinc-500 group-hover:text-zinc-300 transition-colors">{card.label}</p>
+                                            <p className="text-sm font-bold text-white">{card.info}</p>
                                         </div>
                                     </div>
-                                    <div className="flex items-start gap-4">
-                                        <Clock className="text-primary mt-1 shrink-0" size={18} />
-                                        <div>
-                                            <p className="text-sm font-bold text-white">Office Hours</p>
-                                            <p className="text-xs text-zinc-500">24/7 Digital Operations</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                                </motion.div>
+                            ))}
                         </div>
                     </div>
                 </motion.div>
             </main>
         </>
-    );
-}
-
-function LinkCard({ icon: Icon, title, detail, color }: { icon: React.ElementType, title: string, detail: string, color: string }) {
-    return (
-        <a href="#" className="flex items-center gap-4 group">
-            <div className={`h-10 w-10 rounded-xl ${color}/20 flex items-center justify-center text-white transition-transform group-hover:scale-110`}>
-                <Icon size={18} className={color.replace('bg-', 'text-')} />
-            </div>
-            <div>
-                <p className="text-sm font-bold text-white leading-none mb-1">{title}</p>
-                <p className="text-xs text-zinc-500 italic">{detail}</p>
-            </div>
-        </a>
     );
 }

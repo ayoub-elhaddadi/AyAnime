@@ -1,6 +1,5 @@
 "use client";
 
-import { Navbar } from "@/components/shared/Navbar";
 import { motion } from "framer-motion";
 import { Shield, Eye, Lock, FileText } from "lucide-react";
 
@@ -43,7 +42,6 @@ export default function GuidelinesPage() {
 
     return (
         <>
-            <Navbar />
             <main className="container mt-30 mx-auto max-w-4xl px-4 py-20">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}

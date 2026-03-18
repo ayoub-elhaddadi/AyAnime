@@ -3,7 +3,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { animeService } from "@/lib/api";
 import { AnimeCarousel } from "@/components/anime/AnimeCarousel";
-import { Navbar } from "@/components/shared/Navbar";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { Info, TrendingUp, Sparkles, Star, Trophy, BarChart3, History, PlayCircle } from "lucide-react";
@@ -21,7 +20,6 @@ export default function HomePage() {
 
     return (
         <>
-            <Navbar />
             <main className="min-h-screen pb-20">
                 {/* Hero Section */}
                 <section className="relative h-[85vh] xl:h-[100vh] w-full overflow-hidden">

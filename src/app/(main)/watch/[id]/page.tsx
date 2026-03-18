@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
-import { Navbar } from "@/components/shared/Navbar";
+
 import { VideoPlayer } from "@/components/watch/VideoPlayer";
 import { animeService } from "@/lib/api";
 import { Button } from "@/components/ui/button";
@@ -64,19 +64,19 @@ export default function WatchPage() {
 
     const currentEpisode = useMemo(() => {
         if (!episodes.length) return null;
-        
+
         // Try exact match first
         let found = episodes.find(ep => ep.id === currentEpisodeId);
-        
+
         // If no exact match and we have an epParam, try matching by identifier or number
         if (!found && epParam) {
-            found = episodes.find(ep => 
-                ep.id.endsWith(`?ep=${epParam}`) || 
+            found = episodes.find(ep =>
+                ep.id.endsWith(`?ep=${epParam}`) ||
                 ep.id === epParam ||
                 ep.episodeNumber.toString() === epParam
             );
         }
-        
+
         return found || episodes[0];
     }, [episodes, currentEpisodeId, epParam]);
 
@@ -164,7 +164,7 @@ export default function WatchPage() {
     if (animeLoading || episodesLoading) {
         return (
             <div className="min-h-screen bg-black pt-24 pb-20 flex items-center justify-center">
-                <Navbar />
+
                 <div className="flex flex-col items-center gap-4">
                     <Loader2 className="animate-spin text-primary" size={40} />
                     <p className="text-zinc-400 font-medium animate-pulse">Loading amazing anime content...</p>
@@ -176,7 +176,6 @@ export default function WatchPage() {
     if (!anime) {
         return (
             <div className="min-h-screen bg-black pt-24 pb-20 flex flex-col items-center justify-center">
-                <Navbar />
                 <AlertCircle size={64} className="text-red-500 mb-4" />
                 <h1 className="text-2xl font-bold text-white mb-2">Anime Not Found</h1>
                 <Link href="/catalog">
@@ -188,7 +187,6 @@ export default function WatchPage() {
 
     return (
         <main className="min-h-screen bg-black pb-20">
-            <Navbar />
 
             <div className="pt-[72px] lg:pt-[80px]">
                 <div className="w-full max-w-[1920px] mx-auto flex flex-col xl:flex-row gap-6 p-4 lg:p-6 xl:p-8">

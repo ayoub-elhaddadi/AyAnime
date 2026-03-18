@@ -2,7 +2,6 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { animeService } from "@/lib/api";
-import { Navbar } from "@/components/shared/Navbar";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
@@ -224,8 +223,6 @@ export default function AnimeDetailsPage() {
 
     return (
         <main className="min-h-screen pb-20 overflow-x-hidden">
-            <Navbar />
-
             {/* Header Banner */}
             <div className="relative h-[400px] w-full">
                 <Image
