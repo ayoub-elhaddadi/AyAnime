@@ -13,7 +13,7 @@ export default function MaintenancePage() {
     });
 
     useEffect(() => {
-        let cookieEndTime = document.cookie.split("; ").find(row => row.startsWith("mnt_end_time="));
+        const cookieEndTime = document.cookie.split("; ").find(row => row.startsWith("mnt_end_time="));
         let targetTime: number;
 
         if (cookieEndTime) {

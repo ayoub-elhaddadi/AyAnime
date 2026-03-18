@@ -24,7 +24,6 @@ export default function WatchPage() {
     // Derived episode ID from URL params
     const initialEpisodeId = epParam ? `${animeId}?ep=${epParam}` : null;
 
-    const [selectedServerName, setSelectedServerName] = useState<string>("");
     const [serverType, setServerType] = useState<"sub" | "dub">("sub");
     const [currentEpisodeId, setCurrentEpisodeId] = useState<string | null>(initialEpisodeId);
 
@@ -44,29 +43,30 @@ export default function WatchPage() {
     });
     const episodes = useMemo(() => episodesData?.data || [], [episodesData]);
 
-    // Auto-select first episode if none in URL
-    useEffect(() => {
-        if (!initialEpisodeId && episodes.length > 0 && !currentEpisodeId) {
-            const firstId = episodes[0].id;
-            setCurrentEpisodeId(prev => prev !== firstId ? firstId : prev);
+    // Derive effective episode ID: use current state, or auto-select first episode
+    const effectiveEpisodeId = useMemo(() => {
+        if (currentEpisodeId) return currentEpisodeId;
+        if (!initialEpisodeId && episodes.length > 0) {
+            return episodes[0].id;
         }
-    }, [episodes, initialEpisodeId, currentEpisodeId]);
+        return null;
+    }, [currentEpisodeId, initialEpisodeId, episodes]);
 
     // Update URL when episode changes (shallow routing)
     useEffect(() => {
-        if (currentEpisodeId) {
-            const epIdentifier = currentEpisodeId.split("?ep=")[1];
+        if (effectiveEpisodeId) {
+            const epIdentifier = effectiveEpisodeId.split("?ep=")[1];
             if (epIdentifier && epIdentifier !== epParam) {
                 router.replace(`/watch/${animeId}?ep=${epIdentifier}`, { scroll: false });
             }
         }
-    }, [currentEpisodeId, animeId, router, epParam]);
+    }, [effectiveEpisodeId, animeId, router, epParam]);
 
     const currentEpisode = useMemo(() => {
         if (!episodes.length) return null;
 
         // Try exact match first
-        let found = episodes.find(ep => ep.id === currentEpisodeId);
+        let found = episodes.find(ep => ep.id === effectiveEpisodeId);
 
         // If no exact match and we have an epParam, try matching by identifier or number
         if (!found && epParam) {
@@ -78,20 +78,22 @@ export default function WatchPage() {
         }
 
         return found || episodes[0];
-    }, [episodes, currentEpisodeId, epParam]);
+    }, [episodes, effectiveEpisodeId, epParam]);
 
-    // Update currentEpisodeId if we found a better match after episodes loaded
-    useEffect(() => {
+    // Sync currentEpisodeId when a better match is found after episodes load.
+    // This is driven by user interaction (epParam from URL), so we derive it.
+    const resolvedEpisodeId = useMemo(() => {
         if (episodes.length > 0 && epParam && currentEpisode) {
-            const epId = currentEpisode.id;
-            setCurrentEpisodeId(prev => prev !== epId ? epId : prev);
+            return currentEpisode.id;
         }
-    }, [episodes, epParam, currentEpisode]);
+        return effectiveEpisodeId;
+    }, [episodes, epParam, currentEpisode, effectiveEpisodeId]);
 
     const currentIndex = useMemo(() => {
         if (!currentEpisode) return -1;
         return episodes.findIndex(ep => ep.id === currentEpisode.id);
     }, [episodes, currentEpisode]);
+
 
     const hasNext = currentIndex !== -1 && currentIndex < episodes.length - 1;
     const hasPrev = currentIndex !== -1 && currentIndex > 0;
@@ -112,9 +114,9 @@ export default function WatchPage() {
 
     // 2. Fetch Servers for Current Episode
     const { data: serversData, isLoading: serversLoading } = useQuery({
-        queryKey: ["servers", currentEpisodeId],
-        queryFn: () => currentEpisodeId ? animeService.getServers(currentEpisodeId) : null,
-        enabled: !!currentEpisodeId,
+        queryKey: ["servers", resolvedEpisodeId],
+        queryFn: () => resolvedEpisodeId ? animeService.getServers(resolvedEpisodeId) : null,
+        enabled: !!resolvedEpisodeId,
         staleTime: 1000 * 60 * 5,
     });
     const serversInfo = useMemo(() => {
@@ -126,35 +128,31 @@ export default function WatchPage() {
         };
     }, [serversData]);
 
-    // Auto-select first available server and type (limited to hd-2 due to filtering above)
-    useEffect(() => {
-        if (serversInfo) {
-            const hasSub = serversInfo.sub.length > 0;
-            const hasDub = serversInfo.dub.length > 0;
+    // Derive the effective server type: auto-correct if preferred type isn't available
+    const effectiveServerType = useMemo(() => {
+        if (!serversInfo) return serverType;
+        const hasSub = serversInfo.sub.length > 0;
+        const hasDub = serversInfo.dub.length > 0;
 
-            if (serverType === "sub" && hasSub) {
-                const name = serversInfo.sub[0].name;
-                setSelectedServerName(prev => prev !== name ? name : prev);
-            } else if (serverType === "dub" && hasDub) {
-                const name = serversInfo.dub[0].name;
-                setSelectedServerName(prev => prev !== name ? name : prev);
-            } else if (hasSub) {
-                setServerType("sub");
-                const name = serversInfo.sub[0].name;
-                setSelectedServerName(prev => prev !== name ? name : prev);
-            } else if (hasDub) {
-                setServerType("dub");
-                const name = serversInfo.dub[0].name;
-                setSelectedServerName(prev => prev !== name ? name : prev);
-            }
-        }
+        if (serverType === "sub" && hasSub) return "sub";
+        if (serverType === "dub" && hasDub) return "dub";
+        if (hasSub) return "sub";
+        if (hasDub) return "dub";
+        return serverType;
     }, [serversInfo, serverType]);
+
+    // Derive selected server name from serversInfo and effectiveServerType
+    const selectedServerName = useMemo(() => {
+        if (!serversInfo) return "";
+        const servers = effectiveServerType === "sub" ? serversInfo.sub : serversInfo.dub;
+        return servers.length > 0 ? servers[0].name : "";
+    }, [serversInfo, effectiveServerType]);
 
     // 3. Fetch Stream Source
     const { data: streamData, isLoading: streamLoading, error: streamError } = useQuery({
-        queryKey: ["stream", selectedServerName, serverType, currentEpisodeId],
-        queryFn: () => animeService.getStream(selectedServerName, serverType, currentEpisodeId!),
-        enabled: !!(selectedServerName && serverType && currentEpisodeId),
+        queryKey: ["stream", selectedServerName, effectiveServerType, resolvedEpisodeId],
+        queryFn: () => animeService.getStream(selectedServerName, effectiveServerType, resolvedEpisodeId!),
+        enabled: !!(selectedServerName && effectiveServerType && resolvedEpisodeId),
         retry: 1,
         staleTime: 1000 * 60 * 5,
     });
@@ -234,7 +232,7 @@ export default function WatchPage() {
                                     title={anime.title}
                                     episodeNumber={currentEpisode?.episodeNumber}
                                     episodeTitle={currentEpisode?.title}
-                                    episodeId={currentEpisodeId || undefined}
+                                    episodeId={resolvedEpisodeId || undefined}
                                     introStart={streamInfo?.intro?.start}
                                     introEnd={streamInfo?.intro?.end}
                                     outroStart={streamInfo?.outro?.start}
@@ -253,7 +251,7 @@ export default function WatchPage() {
                                             onClick={() => setServerType("sub")}
                                             className={cn(
                                                 "h-9 px-5 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all",
-                                                serverType === "sub"
+                                                effectiveServerType === "sub"
                                                     ? "bg-primary text-white shadow-[0_0_25px_rgba(168,85,247,0.5)] scale-105"
                                                     : "text-zinc-500 hover:text-zinc-300"
                                             )}
@@ -264,7 +262,7 @@ export default function WatchPage() {
                                             onClick={() => setServerType("dub")}
                                             className={cn(
                                                 "h-9 px-5 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all",
-                                                serverType === "dub"
+                                                effectiveServerType === "dub"
                                                     ? "bg-primary text-white shadow-[0_0_25px_rgba(168,85,247,0.5)] scale-105"
                                                     : "text-zinc-500 hover:text-zinc-300"
                                             )}
@@ -304,7 +302,7 @@ export default function WatchPage() {
                         <div className="mt-12">
                             <EpisodeList
                                 episodes={episodes}
-                                currentEpisodeId={currentEpisodeId || undefined}
+                                currentEpisodeId={resolvedEpisodeId || undefined}
                                 onEpisodeClick={(id) => {
                                     setCurrentEpisodeId(id);
                                     window.scrollTo({ top: 0, behavior: "smooth" });
