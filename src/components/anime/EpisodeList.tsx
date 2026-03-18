@@ -20,6 +20,7 @@ export const EpisodeList: React.FC<EpisodeListProps> = ({
     episodes,
     currentEpisodeId,
     onEpisodeClick,
+    animeId,
     isLoading,
     title = "Episode List"
 }) => {
@@ -46,7 +47,7 @@ export const EpisodeList: React.FC<EpisodeListProps> = ({
         const observer = new IntersectionObserver(
             (entries) => {
                 if (entries[0].isIntersecting && visibleCount < filteredEpisodes.length) {
-                    setVisibleCount((prev) => Math.min(prev + 30, filteredEpisodes.length));
+                    setVisibleCount((prev) => Math.min(prev + 10, filteredEpisodes.length));
                 }
             },
             { threshold: 0.1 }
@@ -89,7 +90,7 @@ export const EpisodeList: React.FC<EpisodeListProps> = ({
                         value={searchQuery}
                         onChange={(e) => {
                             setSearchQuery(e.target.value);
-                            setVisibleCount(30);
+                            setVisibleCount(20);
                         }}
                         className="w-full bg-zinc-900 border border-white/5 rounded-xl py-2.5 pl-10 pr-4 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:ring-1 focus:ring-primary/50 transition-all shadow-inner"
                     />
@@ -174,10 +175,15 @@ export const EpisodeList: React.FC<EpisodeListProps> = ({
                                 );
                             }
 
+                            const epIdentifier = ep.id.includes("?ep=") ? ep.id.split("?ep=")[1] : ep.id;
+                            const watchHref = animeId
+                                ? `/watch/${animeId}?ep=${epIdentifier}`
+                                : `/watch/${ep.id}`;
+
                             return (
                                 <Link
                                     key={ep.id}
-                                    href={`/watch/${ep.id}`}
+                                    href={watchHref}
                                     className={className}
                                 >
                                     {content}

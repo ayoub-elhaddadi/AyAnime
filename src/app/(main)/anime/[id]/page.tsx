@@ -229,7 +229,7 @@ export default function AnimeDetailsPage() {
             {/* Header Banner */}
             <div className="relative h-[400px] w-full">
                 <Image
-                    src={anime.poster}
+                    src={anime.poster || "/placeholder-poster.png"}
                     alt={anime.title}
                     fill
                     sizes="100vw"
@@ -250,7 +250,7 @@ export default function AnimeDetailsPage() {
                             className="relative aspect-[3/4] overflow-hidden rounded-xl shadow-2xl ring-1 ring-white/10"
                         >
                             <Image
-                                src={anime.poster}
+                                src={anime.poster || "/placeholder-poster.png"}
                                 alt={anime.title}
                                 fill
                                 sizes="(max-width: 768px) 100vw, 288px"

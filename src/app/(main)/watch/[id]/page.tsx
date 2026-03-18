@@ -42,12 +42,13 @@ export default function WatchPage() {
         queryFn: () => animeService.getEpisodes(animeId),
         staleTime: 1000 * 60 * 60,
     });
-    const episodes = episodesData?.data || [];
+    const episodes = useMemo(() => episodesData?.data || [], [episodesData]);
 
     // Auto-select first episode if none in URL
     useEffect(() => {
         if (!initialEpisodeId && episodes.length > 0 && !currentEpisodeId) {
-            setCurrentEpisodeId(episodes[0].id);
+            const firstId = episodes[0].id;
+            setCurrentEpisodeId(prev => prev !== firstId ? firstId : prev);
         }
     }, [episodes, initialEpisodeId, currentEpisodeId]);
 
@@ -62,8 +63,30 @@ export default function WatchPage() {
     }, [currentEpisodeId, animeId, router, epParam]);
 
     const currentEpisode = useMemo(() => {
-        return episodes.find(ep => ep.id === currentEpisodeId) || episodes[0];
-    }, [episodes, currentEpisodeId]);
+        if (!episodes.length) return null;
+        
+        // Try exact match first
+        let found = episodes.find(ep => ep.id === currentEpisodeId);
+        
+        // If no exact match and we have an epParam, try matching by identifier or number
+        if (!found && epParam) {
+            found = episodes.find(ep => 
+                ep.id.endsWith(`?ep=${epParam}`) || 
+                ep.id === epParam ||
+                ep.episodeNumber.toString() === epParam
+            );
+        }
+        
+        return found || episodes[0];
+    }, [episodes, currentEpisodeId, epParam]);
+
+    // Update currentEpisodeId if we found a better match after episodes loaded
+    useEffect(() => {
+        if (episodes.length > 0 && epParam && currentEpisode) {
+            const epId = currentEpisode.id;
+            setCurrentEpisodeId(prev => prev !== epId ? epId : prev);
+        }
+    }, [episodes, epParam, currentEpisode]);
 
     const currentIndex = useMemo(() => {
         if (!currentEpisode) return -1;
@@ -110,15 +133,19 @@ export default function WatchPage() {
             const hasDub = serversInfo.dub.length > 0;
 
             if (serverType === "sub" && hasSub) {
-                setSelectedServerName(serversInfo.sub[0].name);
+                const name = serversInfo.sub[0].name;
+                setSelectedServerName(prev => prev !== name ? name : prev);
             } else if (serverType === "dub" && hasDub) {
-                setSelectedServerName(serversInfo.dub[0].name);
+                const name = serversInfo.dub[0].name;
+                setSelectedServerName(prev => prev !== name ? name : prev);
             } else if (hasSub) {
                 setServerType("sub");
-                setSelectedServerName(serversInfo.sub[0].name);
+                const name = serversInfo.sub[0].name;
+                setSelectedServerName(prev => prev !== name ? name : prev);
             } else if (hasDub) {
                 setServerType("dub");
-                setSelectedServerName(serversInfo.dub[0].name);
+                const name = serversInfo.dub[0].name;
+                setSelectedServerName(prev => prev !== name ? name : prev);
             }
         }
     }, [serversInfo, serverType]);
@@ -131,7 +158,7 @@ export default function WatchPage() {
         retry: 1,
         staleTime: 1000 * 60 * 5,
     });
-    const streamInfo = streamData?.data && Array.isArray(streamData.data) ? streamData.data[0] : (streamData?.data as { link?: { file: string }, tracks?: any[] });
+    const streamInfo = (streamData?.data && Array.isArray(streamData.data) ? streamData.data[0] : streamData?.data) as import("@/types/Anime").StreamSource | null;
 
     // Initial Loading State
     if (animeLoading || episodesLoading) {
@@ -181,7 +208,7 @@ export default function WatchPage() {
                                     </Link>
                                     <span className="text-zinc-700 font-thin select-none">/</span>
                                     <span className="text-zinc-400 font-bold leading-none">
-                                        EP {currentEpisode.episodeNumber} - {currentEpisode.title}
+                                        EP {currentEpisode?.episodeNumber} - {currentEpisode?.title}
                                     </span>
                                 </div>
                             </div>
@@ -206,6 +233,13 @@ export default function WatchPage() {
                                     url={streamInfo.link.file}
                                     poster={anime.poster}
                                     subtitles={streamInfo.tracks}
+                                    title={anime.title}
+                                    episodeNumber={currentEpisode?.episodeNumber}
+                                    episodeTitle={currentEpisode?.title}
+                                    episodeId={currentEpisodeId || undefined}
+                                    introStart={streamInfo?.intro?.start}
+                                    introEnd={streamInfo?.intro?.end}
+                                    outroStart={streamInfo?.outro?.start}
                                 />
                             )}
                         </div>
